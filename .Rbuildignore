@@ -1,2 +1,4 @@
+^renv$
+^renv\.lock$
 ^safeR\.Rproj$
 ^\.Rproj\.user$
