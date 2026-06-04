@@ -49,7 +49,7 @@
 ### definition ###
 ##################
 #' @exportClass fieldSchema
-setClass(
+methods::setClass(
     "fieldSchema",
     slots = c(
         type = "character",
@@ -62,7 +62,7 @@ setClass(
 # validation #
 ##############
 .checkType <- function(type) {
-    if (!isClass(type)) {
+    if (!methods::isClass(type)) {
         stop("invalid fieldSchema: 'type' must be a valid class name")
     }
 }
@@ -91,7 +91,7 @@ setClass(
     }
 }
 
-setValidity(
+methods::setValidity(
     "fieldSchema",
     function(object) {
         .checkType(object@type)
@@ -107,7 +107,7 @@ setValidity(
 ########
 # init #
 ########
-setMethod(
+methods::setMethod(
     "initialize",
     "fieldSchema",
     function(
@@ -121,7 +121,7 @@ setMethod(
         .Object@default <- default
         .Object@validation <- validation
         # validate
-        validObject(.Object)
+        methods::validObject(.Object)
         # return
         return(.Object)
     }

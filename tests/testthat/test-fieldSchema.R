@@ -24,7 +24,7 @@ testthat::test_that(
   "invalid type",
   {
     expect_error(
-      new(
+      methods::new(
         "fieldSchema",
         type = "notARealClass"
       ),
@@ -39,7 +39,7 @@ testthat::test_that(
   "default of incorrect type",
   {
     expect_error(
-      new(
+      methods::new(
         "fieldSchema",
         type = "numeric",
         default = "a"
@@ -55,7 +55,7 @@ testthat::test_that(
   "invalid validation function",
   {
     expect_error(
-      new(
+      methods::new(
         "fieldSchema",
         type = "numeric",
         validation = function(x) "not a boolean"
