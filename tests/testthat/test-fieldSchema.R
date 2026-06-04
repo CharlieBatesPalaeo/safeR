@@ -15,8 +15,7 @@ testthat::test_that(
       default = 1,
       validation = function(x) is.numeric(x) && length(x) == 1 && x > 0
     )
-  },
-  info = "Creating a fieldSchema with valid type, default, and validation function should succeed."
+  }
 )
 
 # invalid type
@@ -30,8 +29,7 @@ testthat::test_that(
       ),
       "invalid fieldSchema: 'type' must be a valid class name"
     )
-  },
-  info = "Creating a fieldSchema with an invalid type should throw an error."
+  }
 )
 
 # default of incorrect type
@@ -46,8 +44,7 @@ testthat::test_that(
       ),
       "invalid fieldSchema: 'default' must be of the specified type"
     )
-  },
-  info = "Creating a fieldSchema with a default value of incorrect type should throw an error."
+  }
 )
 
 # invalid validation function
@@ -62,6 +59,5 @@ testthat::test_that(
       ),
       "invalid fieldSchema: 'validation' must be a function that returns a single boolean"
     )
-  },
-  info = "Creating a fieldSchema with an invalid validation function should throw an error."
+  }
 )
