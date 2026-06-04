@@ -48,7 +48,7 @@ testthat::test_that(
                 -3,
                 positiveIntSchema
             ),
-            regexp = "validationError: value does not satisfy validation function: function(x) is.numeric(x) && length(x) == 1 && x > 0"
+            regexp = "validationError: value does not satisfy validation function for field 'numeric': function(x) is.numeric(x) && length(x) == 1 && x > 0"
         )
     }
 )

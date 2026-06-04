@@ -74,9 +74,13 @@ methods::setMethod(
                 schema@type,
                 "': ",
                 paste(
-                    trimws(deparse(schema@validation)),
-                    collapse = ""
-                    )
+                    gsub(
+                        "^function\\s*\\(",
+                        "function(",
+                        trimws(deparse(schema@validation))
+                    ),
+                    collapse = " "
+                )
             ))
         }
         # pass value if valid
