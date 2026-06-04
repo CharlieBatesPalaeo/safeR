@@ -21,8 +21,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: true
       matrix:
-        r-version: ['4.3.3', '4.4.3', '4.5.3', '4.6.0']
+        r-version: ['oldrel-2', 'oldrel-1', 'oldrel', 'release']
 
     steps:
       - uses: actions/checkout@v4
