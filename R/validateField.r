@@ -1,15 +1,22 @@
 #' validateField
-#' 
-#' Validate a value against a fieldSchema, returning the value if valid or throwing an error if not.
-#' 
 #' @name validateField
 #' @docType methods
-#' @aliases validateField,ANY,fieldSchema-method
 #' 
-#' @param x value to validate (set to NULL to use schema default)
+#' @description Validate a value against a fieldSchema, returning the value if valid or throwing an error if not.
+#' 
+#' @param x value to validate (can be NULL)
 #' @param schema fieldSchema object defining validation rules
 #' 
-#' @return validated value (default if x is NULL)
+#' @return validated value
+#' 
+#' @details This function checks if the provided value \code{x} is valid according to the rules defined in the \code{schema}.
+#' 
+#' The function first checks if the value is of the correct type as specified in the schema and then applies any uder-defined validation
+#' attached to the schema.
+#' 
+#' If all checks pass, the validated value is returned. Otherwise, an error is thrown.
+#' 
+#' If \code{x} is \code{NULL}, the default value from the schema is returned (validation will be skipped)
 #' 
 #' @examples
 #' # define a schema for a positive integer field
@@ -54,8 +61,10 @@ methods::setGeneric(
 )
 
 # method for fieldSchema
-#' @rdname validateField-methods
-#' @exportMethod validateField
+#' @rdname validateField
+#' @aliases validateField,fieldSchema-method
+#' @method validateField fieldSchema
+#' @export
 methods::setMethod(
     "validateField",
     methods::signature(schema = "fieldSchema"),
@@ -63,8 +72,8 @@ methods::setMethod(
         x,
         schema
     ) {
-        # default if x is NULL
-        if (is.null(x)) x <- schema@default
+        # return default if x is NULL
+        if (is.null(x)) return(schema@default)
         # check type
         if (!inherits(x, schema@type)) {
             stop(paste0(

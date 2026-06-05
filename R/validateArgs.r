@@ -1,8 +1,47 @@
-###################################
-# wapper for validating functions #
-###################################
-
+#' validateArgs
+#' @name validateArgs
+#' @docType methods
+#' 
+#' @description validateArgs is a wrapper for validating function arguments against fieldSchemas. 
+#' 
+#' @param func function to wrap with validation layer
+#' @param ... named fieldSchema objects corresponding to arguments of \code{func}.
+#' 
+#' @return a wrapped version of \code{func} that validates its arguments against the provided schemas before executing.
+#' 
+#' @details Any number of the functions arguments can be validated, but all schemas must match a declared argument of \code{func}.
+#' 
+#' If an argument is not provided, the \code{fieldSchema} default, if specified, will override the \code{func} default.
+#'
+#' @examples
+#' # define a schema for a positive integer field
+#' positiveIntSchema <- new(
+#'     "fieldSchema",
+#'     type = "numeric",
+#'     default = 1,
+#'     validation = function(x) is.numeric(x) && length(x) == 1 && x > 0
+#' )
+#' # arbitrary function 
+#' testFunc <- function(a = 1) a + 1
+#' # apply validation layer
+#' validatedFunc <- validateArgs(
+#'     testFunc,
+#'     a = positiveIntSchema
+#' )
+#' # valid args
+#' validatedFunc(5)
+#' # invalid args
+#' try(
+#'     validatedFunc("a")
+#' )
+#' try(
+#'     validatedFunc(-3)
+#' )
+##################
+### definition ###
+##################
 # generic + type error
+#' @export
 setGeneric(
     "validateArgs",
     function(
@@ -13,7 +52,11 @@ setGeneric(
     }
 )
 
-# method for function input
+# method for fieldSchema
+#' @rdname  validateArgs
+#' @aliases validateArgs,fieldSchema-method
+#' @method validateArgs fieldSchema
+#' @export
 setMethod(
     "validateArgs",
     signature(func = "function"),

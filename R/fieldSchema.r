@@ -1,15 +1,13 @@
 #' fieldSchema
-#'
-#' S4 implementation of schema for defining fields
-#' 
 #' @name fieldSchema
-#' @docType 
 #'
+#' @description implementation of schema for defining fields
+#' 
 #' @slot type character: expected class of value
 #' @slot default any: default value for the field (\code{NULL} if not provided)
 #' @slot validation function: validation function for the field (\code{function(x) TRUE} if not provided)
 #' 
-#' @description
+#' @details
 #' Use \code{new("fieldSchema", ...)} to create a new schema. This will run internal validation checks on the type (must be a valid, loaded class),
 #' default (must be of the specified type), and validation function (must return a single boolean). See examples below for usage and error cases.
 #'  
