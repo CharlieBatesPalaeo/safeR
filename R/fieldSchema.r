@@ -1,5 +1,5 @@
 #' fieldSchema
-#' @name fieldSchema
+#' @name fieldSchema-class
 #'
 #' @description implementation of schema for defining fields
 #' 
