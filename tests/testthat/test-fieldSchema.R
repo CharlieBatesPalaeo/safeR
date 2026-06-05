@@ -26,7 +26,8 @@ testthat::test_that(
                 "fieldSchema",
                 type = "notARealClass"
             ),
-            regexp = "invalid fieldSchema: 'type' must be a valid class name"
+            regexp = "invalid fieldSchema: 'type' must be a valid class name",
+            fixed = TRUE
         )
     }
 )
@@ -40,7 +41,8 @@ testthat::test_that(
                 type = "numeric",
                 default = "a"
             ),
-        regexp = "invalid fieldSchema: 'default' value must be of class 'numeric'"
+        regexp = "invalid fieldSchema: 'default' value must be of class 'numeric'",
+        fixed = TRUE
         )
     }
 )
@@ -54,7 +56,8 @@ testthat::test_that(
                 type = "numeric",
                 validation = function(x) "not a boolean"
             ),
-        regexp = "invalid fieldSchema: 'validation' function must return a single boolean"
+        regexp = "invalid fieldSchema: 'validation' function must return a single boolean",
+        fixed = TRUE
         )
     }
 )

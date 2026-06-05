@@ -35,10 +35,22 @@ testthat::test_that(
                 "a",
                 positiveIntSchema
             ),
-            regexp = "typeError: value must be of class 'numeric'"
+            regexp = "typeError: value must be of class 'numeric'",
+            fixed = TRUE
         )
     }
 )
+res <- try(
+    validateField(
+        -3,
+        positiveIntSchema
+    ),
+    silent = TRUE
+)
+
+if (inherits(res, "try-error")) {
+  cat(as.character(res), "\n")
+}
 
 # violates validation function
 testthat::test_that(
@@ -48,7 +60,8 @@ testthat::test_that(
                 -3,
                 positiveIntSchema
             ),
-            regexp = "  validationError: value does not satisfy validation function for field 'numeric': function(x) is.numeric(x) && length(x) == 1 && x > 0"
+            regexp = "validationError: value does not satisfy validation function for field 'numeric': function(x) is.numeric(x) && length(x) == 1 && x > 0",
+            fixed = TRUE
         )
     }
 )
@@ -74,7 +87,8 @@ testthat::test_that(
                 5,
                 "notARealSchema"
             ),
-            regexp = "typeError: 'schema' must be of class 'fieldSchema'"
+            regexp = "typeError: 'schema' must be of class 'fieldSchema'",
+            fixed = TRUE
         )
     }
 )
