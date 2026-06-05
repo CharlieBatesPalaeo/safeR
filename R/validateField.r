@@ -54,7 +54,7 @@ methods::setGeneric(
 )
 
 # method for fieldSchema
-#' @rdname validateField
+#' @rdname validateField-methods
 #' @exportMethod validateField
 methods::setMethod(
     "validateField",
