@@ -2,6 +2,8 @@
 #' 
 #' Validate a value against a fieldSchema, returning the value if valid or throwing an error if not.
 #' 
+#' @name validateField
+#' @doctType methods
 #' @aliases validateField,ANY,fieldSchema-method
 #' 
 #' @param x value to validate (set to NULL to use schema default)
@@ -40,7 +42,7 @@
 ### definition ###
 ##################
 # generic + type error
-#' @export'
+#' @export
 methods::setGeneric(
     "validateField",
     function(
@@ -52,7 +54,8 @@ methods::setGeneric(
 )
 
 # method for fieldSchema
-#' @export
+#' @rdname validateField
+#' @exportMethod validateField
 methods::setMethod(
     "validateField",
     methods::signature(schema = "fieldSchema"),

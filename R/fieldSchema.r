@@ -1,8 +1,10 @@
 #' fieldSchema
 #'
 #' S4 implementation of schema for defining fields
-#' @rdname fieldSchema
 #' 
+#' @name fieldSchema
+#' @docType 
+#'
 #' @slot type character: expected class of value
 #' @slot default any: default value for the field (\code{NULL} if not provided)
 #' @slot validation function: validation function for the field (\code{function(x) TRUE} if not provided)
