@@ -3,7 +3,7 @@
 #' Validate a value against a fieldSchema, returning the value if valid or throwing an error if not.
 #' 
 #' @name validateField
-#' @doctType methods
+#' @docType methods
 #' @aliases validateField,ANY,fieldSchema-method
 #' 
 #' @param x value to validate (set to NULL to use schema default)
