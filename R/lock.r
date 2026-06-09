@@ -76,9 +76,7 @@ lock <- function(
 ) {
     # home env
     args <- list(...)
-    print(args)
     if ("env" %in% names(args)) env <- args$env else env <- parent.frame()
-    print(env)
     name <- deparse(substitute(x))
     # call type-safe wrapper
     # (see R/wrappers.r for caching logic)
