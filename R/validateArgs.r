@@ -2,7 +2,7 @@
 #' @name validateArgs
 #' @docType methods
 #' 
-#' @description validateArgs is a wrapper for validating function arguments against fieldSchemas. 
+#' @description Wrapper for validating function arguments against fieldSchemas. 
 #' 
 #' @param func function to wrap with validation layer
 #' @param ... named fieldSchema objects corresponding to arguments of \code{func}.
@@ -83,6 +83,7 @@ setMethod(
 
         # define wrapper that validates args
         function(...) {
+            caller_env <- parent.frame()
             # normalise call (inserts names, orders as in definition, adds default values)
             mc <- match.call(
                 func,
@@ -97,10 +98,10 @@ setMethod(
                 function(a)
             {
                 # from call if provided
-                if (!is.null(mc[[a]])) eval(mc[[a]], parent.frame())
+                if (!is.null(mc[[a]])) eval(mc[[a]], caller_env)
                 # then function default, if not overidden by schema
                 else if (!(a %in% nms) && !identical(fmls[[a]], quote(expr = ))) {
-                    eval(fmls[[a]], parent.frame())
+                    eval(fmls[[a]], caller_env)
                 }
                 # null if using schema default (handled in validateField call below)
                 else NULL
@@ -114,7 +115,7 @@ setMethod(
             do.call(
                 func,
                 vals,
-                envir = parent.frame()
+                envir = caller_env
             )
         }
     }

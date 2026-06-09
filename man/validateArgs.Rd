@@ -20,7 +20,7 @@ validateArgs(func, ...)
 a wrapped version of \code{func} that validates its arguments against the provided schemas before executing.
 }
 \description{
-validateArgs is a wrapper for validating function arguments against fieldSchemas.
+Wrapper for validating function arguments against fieldSchemas.
 }
 \details{
 Any number of the functions arguments can be validated, but all schemas must match a declared argument of \code{func}.
