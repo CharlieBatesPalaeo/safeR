@@ -25,9 +25,9 @@ Functions for locking the class and/or value of an object.
 \details{
 \code{x} will be replaced with an active binding linking \code{x} to the newly created
 environment '\code{xLocked}'. When \code{x} is called, a function is run. If evaluating
-(i.e. \code{y <- x}), this function extracts the current value of /code{x} from /code{xLocked}.
-If assigning (i.e. \code{x <- y}), the input is compared against the original class of /code{x}
-or the original value of /code{x}, depending on the type of lock.
+(i.e. \code{y <- x}), this function extracts the current value of \code{x} from \code{xLocked}.
+If assigning (i.e. \code{x <- y}), the input is compared against the original class of \code{x}
+or the original value of \code{x}, depending on the type of lock.
 
 Locked objects will only remain locked within the environment they are created within. For example,
 for a value-locked object \code{x} and function \code{func <- function(x) x <- y}, \code{func} will succeed,
@@ -37,7 +37,6 @@ but an error will be thrown if the output of \code{func} is assinged to \code{x}
 \code{lock(x, lockValue = TRUE)} respectively.
 }
 \examples{
-## type lock
 x <- 10
 lockType(10)
 # value is mutable
