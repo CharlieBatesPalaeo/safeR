@@ -11,9 +11,9 @@
 #' 
 #' @details \code{x} will be replaced with an active binding linking \code{x} to the newly created
 #' environment '\code{xLocked}'. When \code{x} is called, a function is run. If evaluating
-#' (i.e. \code{y <- x}), this function extracts the current value of /code{x} from /code{xLocked}.
-#' If assigning (i.e. \code{x <- y}), the input is compared against the original class of /code{x}
-#' or the original value of /code{x}, depending on the type of lock.
+#' (i.e. \code{y <- x}), this function extracts the current value of \code{x} from \code{xLocked}.
+#' If assigning (i.e. \code{x <- y}), the input is compared against the original class of \code{x}
+#' or the original value of \code{x}, depending on the type of lock.
 #' 
 #' Locked objects will only remain locked within the environment they are created within. For example,
 #' for a value-locked object \code{x} and function \code{func <- function(x) x <- y}, \code{func} will succeed,
@@ -23,47 +23,47 @@
 #' \code{lock(x, lockValue = TRUE)} respectively.
 #' 
 #' @examples
-#' ## type lock
-#' x <- 10
-#' lockType(10)
-#' # value is mutable
-#' x <- 5
-#' # type is not
-#' try(
-#'     x <- "notANumeric"
-#' )
-#' 
-#' ## value lock
-#' y <- 10
-#' lockValue(y)
-#' # value and type immutable
-#' try(
-#'     y <- 5
-#' )
-#' try(
-#'     y <- "notANumeric"
-#' )
-#' 
-#' ## used within function, but locked outside
-#' x <- 10
-#' func <- function(x) x <- 20
-#' lockValue(x)
-#' # function works in isolation
-#' func(x)
-#' # fails if output assigned to x
-#' try(
-#'     x <- func(x)
-#' )
-#' 
-#' ## locked and used within function
-#' x <- 10
-#' func <- function(x) {
-#'     lockType(x)
-#'     try(
-#'         x <- "notANumeric"
-#'     )
-#' }
-#' func()
+## type lock
+x <- 10
+lockType(10)
+# value is mutable
+x <- 5
+# type is not
+try(
+    x <- "notANumeric"
+)
+
+## value lock
+y <- 10
+lockValue(y)
+# value and type immutable
+try(
+    y <- 5
+)
+try(
+    y <- "notANumeric"
+)
+
+## used within function, but locked outside
+x <- 10
+func <- function(x) x <- 20
+lockValue(x)
+# function works in isolation
+func(x)
+# fails if output assigned to x
+try(
+    x <- func(x)
+)
+
+## locked and used within function
+x <- 10
+func <- function(x) {
+    lockType(x)
+    try(
+        x <- "notANumeric"
+    )
+}
+func()
 ##################
 ### Definition ###
 ##################
@@ -77,7 +77,7 @@ lock <- function(
     # home env
     args <- list(...)
     if ("env" %in% names(args)) env <- args$env else env <- parent.frame()
-    name <- deparse(substitute(x))
+    if ("name" %in% names(args)) name <- args$name else name <- deparse(substitute(x))
     # call type-safe wrapper
     # (see R/wrappers.r for caching logic)
     out <- .getValidationWrapper(
@@ -98,7 +98,8 @@ lock <- function(
 lockType <- function(x) lock(
     x,
     lockValue = FALSE,
-    env = parent.frame()
+    env = parent.frame(),
+    name = deparse(substitute(x))
 )
 
 #' @rdname lock
@@ -106,7 +107,8 @@ lockType <- function(x) lock(
 lockValue <- function(x) lock(
     x,
     lockValue = TRUE,
-    env = parent.frame()
+    env = parent.frame(),
+    name = deparse(substitute(x))
 )
 
 # internal function (actually does things)
