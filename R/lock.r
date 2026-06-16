@@ -24,46 +24,46 @@
 #' 
 #' @examples
 ## type lock
-x <- 10
-lockType(10)
-# value is mutable
-x <- 5
-# type is not
-try(
-    x <- "notANumeric"
-)
-
-## value lock
-y <- 10
-lockValue(y)
-# value and type immutable
-try(
-    y <- 5
-)
-try(
-    y <- "notANumeric"
-)
-
-## used within function, but locked outside
-x <- 10
-func <- function(x) x <- 20
-lockValue(x)
-# function works in isolation
-func(x)
-# fails if output assigned to x
-try(
-    x <- func(x)
-)
-
-## locked and used within function
-x <- 10
-func <- function(x) {
-    lockType(x)
-    try(
-        x <- "notANumeric"
-    )
-}
-func()
+#' x <- 10
+#' lockType(10)
+#' # value is mutable
+#' x <- 5
+#' # type is not
+#' try(
+#'     x <- "notANumeric"
+#' )
+#' 
+#' ## value lock
+#' y <- 10
+#' lockValue(y)
+#' # value and type immutable
+#' try(
+#'     y <- 5
+#' )
+#' try(
+#'     y <- "notANumeric"
+#' )
+#' 
+#' ## used within function, but locked outside
+#' x <- 10
+#' func <- function(x) x <- 20
+#' lockValue(x)
+#' # function works in isolation
+#' func(x)
+#' # fails if output assigned to x
+#' try(
+#'     x <- func(x)
+#' )
+#' 
+#' ## locked and used within function
+#' x <- 10
+#' func <- function(x) {
+#'     lockType(x)
+#'     try(
+#'         x <- "notANumeric"
+#'     )
+#' }
+#' func()
 ##################
 ### Definition ###
 ##################
