@@ -25,7 +25,7 @@
 #' @examples
 ## type lock
 #' x <- 10
-#' lockType(10)
+#' lockType(x)
 #' # value is mutable
 #' x <- 5
 #' # type is not
@@ -45,25 +45,25 @@
 #' )
 #' 
 #' ## used within function, but locked outside
-#' x <- 10
-#' func <- function(x) x <- 20
-#' lockValue(x)
+#' z <- 10
+#' func <- function(z) z <- 20
+#' lockValue(z)
 #' # function works in isolation
-#' func(x)
-#' # fails if output assigned to x
+#' func(z)
+#' # fails if output assigned to z
 #' try(
-#'     x <- func(x)
+#'     z <- func(z)
 #' )
 #' 
 #' ## locked and used within function
-#' x <- 10
-#' func <- function(x) {
-#'     lockType(x)
+#' w <- 10
+#' func <- function(w) {
+#'     lockType(w)
 #'     try(
-#'         x <- "notANumeric"
+#'         w <- "notANumeric"
 #'     )
 #' }
-#' func()
+#' func(w)
 ##################
 ### Definition ###
 ##################
