@@ -52,10 +52,10 @@ setGeneric(
     }
 )
 
-# method for fieldSchema
+# method for function
 #' @rdname  validateArgs
-#' @aliases validateArgs,fieldSchema-method
-#' @method validateArgs fieldSchema
+#' @aliases validateArgs,function-method
+#' @method validateArgs function
 #' @export
 setMethod(
     "validateArgs",
@@ -77,7 +77,7 @@ setMethod(
 
         # extract formals (declared arguments) of function
         fmls <- formals(func)
-        # ensure schema for all
+        # ensure schemas match existing arguments
         bad <- setdiff(nms, names(fmls))
         if (length(bad)) stop(paste("unknown args:", paste(bad, collapse = ", ")))
 
@@ -120,3 +120,71 @@ setMethod(
         }
     }
 )
+
+# method for R6ClassGenerator
+#' @rdname  validateArgs
+#' @aliases validateArgs,R6ClassGenerator-method
+#' @method validateArgs R6ClassGenerator
+#' @export
+setMethod(
+    "validateArgs",
+    signature(func = "R6ClassGenerator"),
+    definition = function(
+        func,
+        ...
+    ) {
+        # fast exit if no schemas provided
+        schemas <- list(...)
+        if (!length(schemas)) return(func)
+
+        # check schemas are valid
+        nms <- names(schemas)
+        if (is.null(nms) || any(nms == "")) stop("all schemas must be named")
+        if (any(!vapply(schemas, inherits, logical(1), "fieldSchema"))) {
+            stop("all schemas must be fieldSchema")
+        }
+
+        # extract fields from R6Class
+        flds <- list(
+            public = names(func$public_fields),
+            private = names(func$private_fields)
+        )
+        # also check initializer for args without defaults
+        init <- func$public_methods$initialize
+        if (!(is.null(init))) {
+            flds$public <- unique(c(
+                flds$public,
+                .extractInitFields(init)
+            ))
+        }
+
+        # ensure schemas match existing fields
+        bad <- setdiff(nms, unlist(flds))
+        if (length(bad)) stop(paste("unknown args:", paste(bad, collapse = ", ")))
+
+        # wrap $new() with validation layer
+        function(...) {
+
+        }
+    }
+)
+
+# helper for extracting fields from initializer
+.extractInitFields <- function(init) {
+    # init as string
+    init_string <- paste(deparse(init), collapse = "\n")
+    # extract self$... substrings
+    matches <- gregexpr(
+        "self\\$[a-zA-Z0-9_]+",
+        init_string
+    )
+    matches <- regmatches(
+        init_string,
+        matches
+    )[[1]]
+    # remove prefix
+    out <- sub(
+        "^self\\$", "",
+        matches
+    )
+}
