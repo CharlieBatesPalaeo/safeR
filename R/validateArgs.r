@@ -50,7 +50,7 @@
 #' # apply validation layer
 #' validatedR6 <- validateArgs(
 #' 	testR6,
-#' 	a = positiveIntSchemaDefault
+#' 	a = positiveIntSchema
 #' )
 #' # valid args
 #' validatedR6(5)$a
