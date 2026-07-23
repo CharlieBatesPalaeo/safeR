@@ -89,15 +89,15 @@ testthat::test_that(
     }
 )
 
-# non-function input
+# non-function/R6 input
 testthat::test_that(
-    "non-function input", {
+    "non-function/R6 input", {
         testthat::expect_error(
             validateArgs(
                 "notAFunction",
                 a = positiveIntSchemaNoDefault
             ),
-            regexp = "typeError: 'func' must be a function",
+            regexp = "typeError: 'func' must be a function or R6ClassGenerator",
             fixed = TRUE
         )
     }
