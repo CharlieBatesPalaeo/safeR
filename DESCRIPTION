@@ -11,5 +11,6 @@ Roxygen: list(markdown = TRUE)
 Config/roxygen2/version: 8.0.0
 Imports: 
     methods,
+    R6,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

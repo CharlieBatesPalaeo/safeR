@@ -21,7 +21,9 @@ positiveIntSchemaDefault <- methods::new(
     validation = function(x) is.numeric(x) && length(x) == 1 && x > 0
 )
 
-# arbitrary function 
+############
+# function #
+############
 testFunc <- function(a = 1) a + 1
 
 # apply validation layer
@@ -97,6 +99,82 @@ testthat::test_that(
             ),
             regexp = "typeError: 'func' must be a function",
             fixed = TRUE
+        )
+    }
+)
+
+############
+# R6 Class #
+############
+testR6 <- R6::R6Class(
+	"testR6",
+	public = list(
+	    a = NULL,
+	    initialize = function(a = 1) {
+		    self$a <- a
+		}
+    )
+)
+
+# apply validation layer
+validatedDemoNoDefault <- validateArgs(
+    testR6,
+    a = positiveIntSchemaNoDefault
+)
+
+validatedDemoDefault <- validateArgs(
+    testR6,
+    a = positiveIntSchemaDefault
+)
+
+# valid args
+testthat::test_that(
+    "valid args for R6 class", {
+        testthat::expect_equal(
+            validatedDemoNoDefault(5)$a,
+            5
+        )
+    }
+)
+
+# incorrect type
+testthat::test_that(
+    "arg of incorrect type for R6 class", {
+        testthat::expect_error(
+            validatedDemoNoDefault("x"),
+            regexp = "typeError: value must be of class 'numeric'",
+            fixed = TRUE
+        )
+    }
+)
+
+# violates validation function
+testthat::test_that(
+    "arg violating validation function for R6 class", {
+        testthat::expect_error(
+            validatedDemoNoDefault(-3),
+            regexp = "validationError: value does not satisfy validation function for field 'numeric': function(x) is.numeric(x) && length(x) == 1 && x > 0",
+            fixed = TRUE
+        )
+    }
+)
+
+# default from function when not provided
+testthat::test_that(
+    "default from function when not provided for R6 class", {
+        testthat::expect_equal(
+            validatedDemoNoDefault()$a,
+            1
+        )
+    }
+)
+
+# schema default override
+testthat::test_that(
+    "schema default override for R6 class", {
+        testthat::expect_equal(
+            validatedDemoDefault()$a,
+            2
         )
     }
 )

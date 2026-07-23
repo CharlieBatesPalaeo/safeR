@@ -4,38 +4,40 @@
 \name{validateArgs}
 \alias{validateArgs}
 \alias{validateArgs,function-method}
-\alias{validateArgs,fieldSchema-method}
+\alias{validateArgs,R6ClassGenerator-method}
 \title{validateArgs}
 \usage{
-validateArgs(func, ...)
+validateArgs(x, ...)
 
-\S4method{validateArgs}{function}(func, ...)
+\S4method{validateArgs}{function}(x, ...)
+
+\S4method{validateArgs}{R6ClassGenerator}(x, ...)
 }
 \arguments{
-\item{func}{function to wrap with validation layer}
+\item{x}{function or R6ClassGenerator to wrap with validation layer}
 
-\item{...}{named fieldSchema objects corresponding to arguments of \code{func}.}
+\item{...}{named fieldSchema objects corresponding to arguments of \code{x}.}
 }
 \value{
-a wrapped version of \code{func} that validates its arguments against the provided schemas before executing.
+a wrapped version of \code{x} that validates its arguments against the provided schemas before executing.
 }
 \description{
-Wrapper for validating function arguments against fieldSchemas.
+Wrapper for validating function and R6 class arguments against fieldSchemas.
 }
 \details{
-Any number of the functions arguments can be validated, but all schemas must match a declared argument of \code{func}.
+Any number of the arguments can be validated, but all schemas must match a declared argument of \code{x}.
 
-If an argument is not provided, the \code{fieldSchema} default, if specified, will override the \code{func} default.
+If an argument is not provided, the \code{fieldSchema} default, if specified, will override the \code{x} default.
 }
 \examples{
-# define a schema for a positive integer field
+## define a schema for a positive integer field
 positiveIntSchema <- new(
     "fieldSchema",
     type = "numeric",
     default = 1,
     validation = function(x) is.numeric(x) && length(x) == 1 && x > 0
 )
-# arbitrary function 
+## arbitrary function 
 testFunc <- function(a = 1) a + 1
 # apply validation layer
 validatedFunc <- validateArgs(
@@ -50,5 +52,31 @@ try(
 )
 try(
     validatedFunc(-3)
+)
+## arbitrary R6 class
+testR6 <- R6::R6Class(
+    "testR6",
+    public = list(
+        a = NULL,
+        initialize = function(a = 2) {
+            self$a <- a
+        }
+    )
+)
+# apply validation layer
+validatedR6 <- validateArgs(
+	testR6,
+	a = positiveIntSchemaDefault
+)
+# valid args
+validatedR6(5)$a
+# default args (schema overrides)
+validatedR6()$a
+# invalid args
+try(
+    validatedR6("x")
+)
+try(
+    validatedR6(-3)
 )
 }
