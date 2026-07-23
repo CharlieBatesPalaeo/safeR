@@ -97,7 +97,7 @@ testthat::test_that(
                 "notAFunction",
                 a = positiveIntSchemaNoDefault
             ),
-            regexp = "typeError: 'func' must be a function or R6ClassGenerator",
+            regexp = "typeError: 'x' must be a function or R6ClassGenerator",
             fixed = TRUE
         )
     }
