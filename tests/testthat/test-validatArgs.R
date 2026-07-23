@@ -117,12 +117,12 @@ testR6 <- R6::R6Class(
 )
 
 # apply validation layer
-validatedDemoNoDefault <- validateArgs(
+validatedTestNoDefault <- validateArgs(
     testR6,
     a = positiveIntSchemaNoDefault
 )
 
-validatedDemoDefault <- validateArgs(
+validatedTestDefault <- validateArgs(
     testR6,
     a = positiveIntSchemaDefault
 )
@@ -131,7 +131,7 @@ validatedDemoDefault <- validateArgs(
 testthat::test_that(
     "valid args for R6 class", {
         testthat::expect_equal(
-            validatedDemoNoDefault(5)$a,
+            validatedTestNoDefault(5)$a,
             5
         )
     }
@@ -141,7 +141,7 @@ testthat::test_that(
 testthat::test_that(
     "arg of incorrect type for R6 class", {
         testthat::expect_error(
-            validatedDemoNoDefault("x"),
+            validatedTestNoDefault("x"),
             regexp = "typeError: value must be of class 'numeric'",
             fixed = TRUE
         )
@@ -152,7 +152,7 @@ testthat::test_that(
 testthat::test_that(
     "arg violating validation function for R6 class", {
         testthat::expect_error(
-            validatedDemoNoDefault(-3),
+            validatedTestNoDefault(-3),
             regexp = "validationError: value does not satisfy validation function for field 'numeric': function(x) is.numeric(x) && length(x) == 1 && x > 0",
             fixed = TRUE
         )
@@ -163,7 +163,7 @@ testthat::test_that(
 testthat::test_that(
     "default from function when not provided for R6 class", {
         testthat::expect_equal(
-            validatedDemoNoDefault()$a,
+            validatedTestNoDefault()$a,
             1
         )
     }
@@ -173,7 +173,7 @@ testthat::test_that(
 testthat::test_that(
     "schema default override for R6 class", {
         testthat::expect_equal(
-            validatedDemoDefault()$a,
+            validatedTestDefault()$a,
             2
         )
     }

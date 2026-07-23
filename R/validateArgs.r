@@ -78,12 +78,6 @@ setGeneric(
     }
 )
 
-# Register R6 generator class for S4 method signatures.
-# R6ClassGenerator is an S3/R6 class, so S4 dispatch needs this bridge.
-if (!methods::isClass("R6ClassGenerator")) {
-    methods::setOldClass(c("R6ClassGenerator", "R6"))
-}
-
 # method for function
 #' @rdname  validateArgs
 #' @aliases validateArgs,function-method
@@ -154,6 +148,13 @@ setMethod(
 )
 
 # method for R6ClassGenerator
+
+# Register R6 generator class for S4 method signatures.
+# R6ClassGenerator is an S3/R6 class, so S4 dispatch needs this bridge.
+if (!methods::isClass("R6ClassGenerator")) {
+    methods::setOldClass(c("R6ClassGenerator", "R6"))
+}
+
 #' @rdname  validateArgs
 #' @aliases validateArgs,R6ClassGenerator-method
 #' @method validateArgs R6ClassGenerator
