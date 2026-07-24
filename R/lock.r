@@ -83,7 +83,7 @@ lock <- function(
     out <- .getValidationWrapper(
         name = "lock",
         func = .lockInner,
-        lockValue = singleBool
+        lockValue = .makeSingleBool()
     )(
         x = x,
         lockValue = lockValue,
@@ -183,8 +183,10 @@ lockValue <- function(x) lock(
 }
 
 # fieldSchema for 'value'
-singleBool <- new(
-    "fieldSchema",
-    type = "logical",
-    validation = function(x) length(x) == 1
-)
+.makeSingleBool <- function() {
+    new(
+        "fieldSchema",
+        type = "logical",
+        validation = function(x) length(x) == 1
+    )
+}
