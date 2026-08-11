@@ -23,7 +23,7 @@
 #' operator.
 #' 
 #' @examples
-#' ## define positive integer class with numeric coercion method
+## define positive integer class with numeric coercion method
 #' setClass(
 #'     "posInt",
 #'     contains = "integer",
@@ -41,8 +41,8 @@
 #' )
 #' ## aribtrary function to validate
 #' testWrap <- (function(
-#'     x = 1,
-#'     y = 2
+#'     x = 1, #: posInt
+#'     y = 2 #: posInt
 #' ) {x + y}) %->% "posInt"
 #' ## valid args
 #' testWrap()
@@ -57,6 +57,8 @@
 ##################
 ## public namespace function
 # generic + type error
+#' @rdname validationInfix
+#' @aliases %->%,function,generic-method
 #' @export
 setGeneric(
     '%->%',
