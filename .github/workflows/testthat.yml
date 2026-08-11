@@ -30,6 +30,9 @@ jobs:
       
       - name: Set up R ${{ matrix.r-version }}
         uses: r-lib/actions/setup-r@v2
+        env:
+          R_KEEP_SOURCE: yes
+          R_KEEP_PKG_SOURCE: yes
         with:
           r-version: ${{ matrix.r-version }}
 
