@@ -1,5 +1,5 @@
 #' @name validationInfix
-#' @title validationInfix  (%->%)
+#' @title validationInfix (%->%)
 #' @description infix operator for function validation
 #' 
 #' @param lhs a function to be validated
@@ -58,7 +58,8 @@
 ## public namespace function
 # generic + type error
 #' @rdname validationInfix
-#' @aliases %->%,function,generic-method
+#' @aliases %->%
+#' @aliases validationInfix,function,generic-method
 #' @export
 setGeneric(
     '%->%',
@@ -72,7 +73,8 @@ setGeneric(
 
 # method for function and character string input
 #' @rdname validationInfix
-#' @aliases %->%,function,character-method
+#' @aliases %->%
+#' @aliases validationInfix,function,character-method
 #' @export
 setMethod(
     '%->%',
@@ -86,7 +88,7 @@ setMethod(
     ) {
         # extract input classes from source code of lhs function
         inCls <- .extractInClasses(lhs)
-        inCls <- setNames(as.list(inCls$class), inCls$object)
+        inCls <- stats::setNames(as.list(inCls$class), inCls$object)
 
         # create validation wrapper
         wrapper <- rlang::inject(
@@ -114,7 +116,7 @@ setMethod(
     )
     
     # isolate class definitions
-    out <- strcapture(
+    out <- utils::strcapture(
         "^\\s*(\\w+)\\s*(?:=\\s*[^,]+)?\\s*,?\\s*#:\\s*(\\w+)",
         grep("#:", lines, value = TRUE),
         data.frame(

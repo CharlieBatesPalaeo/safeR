@@ -2,6 +2,7 @@
 % Please edit documentation in R/infix.r
 \name{validationInfix}
 \alias{validationInfix}
+\alias{\%->\%}
 \alias{\%->\%,function,character-method}
 \title{validationInfix  (\%->\%)}
 \usage{
@@ -24,7 +25,7 @@ infix operator for function validation
 Applies both input and output validation to \code{lhs}, with syntax emulating that used
 for static type checking in languages such as C++, Java, and Rust. Validation is strict, with coercion
 only permitted where acoercion method between two classes has been defined by the user (for base R classes,
-default coercion methods are ignored).
+default coercion methods are ignored). Functions must retain source references so the `#:` annotations can be extracted.
 Syntax for using \%->\% is as follows:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{valFunc <- (function(
@@ -38,7 +39,7 @@ after the pattern. The target class for output validation is specified, as a cha
 operator.
 }
 \examples{
-## define positive integer class with numeric coercion method
+# define positive integer class with numeric coercion method
 setClass(
     "posInt",
     contains = "integer",
@@ -55,10 +56,16 @@ setCoercion(
     }
 )
 ## aribtrary function to validate
-testWrap <- (function(
-    x = 1,
-    y = 2
-) {x + y}) \%->\% "posInt"
+testEnv <- new.env(parent = emptyenv())
+tc <- textConnection(paste0(
+    "testFunc <- function(\n",
+    "    x = 1, #: posInt\n",
+    "    y = 2 #: posInt\n",
+    ") {x + y}\n"
+))
+source(tc, local = testEnv, keep.source = TRUE)
+close(tc)
+testWrap <- testEnv$testFunc \%->\% "posInt"
 ## valid args
 testWrap()
 testWrap(x = 5)
