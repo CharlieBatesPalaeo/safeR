@@ -3,8 +3,10 @@
 \name{validationInfix}
 \alias{validationInfix}
 \alias{\%->\%}
+\alias{validationInfix,function,generic-method}
 \alias{\%->\%,function,character-method}
-\title{validationInfix  (\%->\%)}
+\alias{validationInfix,function,character-method}
+\title{validationInfix (\%->\%)}
 \usage{
 lhs \%->\% rhs
 
@@ -25,7 +27,7 @@ infix operator for function validation
 Applies both input and output validation to \code{lhs}, with syntax emulating that used
 for static type checking in languages such as C++, Java, and Rust. Validation is strict, with coercion
 only permitted where acoercion method between two classes has been defined by the user (for base R classes,
-default coercion methods are ignored). Functions must retain source references so the `#:` annotations can be extracted.
+default coercion methods are ignored).
 Syntax for using \%->\% is as follows:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{valFunc <- (function(
@@ -37,9 +39,10 @@ Syntax for using \%->\% is as follows:
 Here, the '#:' pattern is used to signal arguments of \code{lhs} to validate, with the target class specified
 after the pattern. The target class for output validation is specified, as a character string, after the \%->\%
 operator.
+IMPORTANT: to use \%->\% in non-interactive mode. For {source()}, set the option \code{keep.source = TRUE}. For
+{Rscript} and {R CMD BATCH}, set the environment variables \code{R_KEEP_SOURCE} amd \code{R_KEEP_PKG_SOURCE} to "yes".
 }
 \examples{
-# define positive integer class with numeric coercion method
 setClass(
     "posInt",
     contains = "integer",
@@ -56,16 +59,10 @@ setCoercion(
     }
 )
 ## aribtrary function to validate
-testEnv <- new.env(parent = emptyenv())
-tc <- textConnection(paste0(
-    "testFunc <- function(\n",
-    "    x = 1, #: posInt\n",
-    "    y = 2 #: posInt\n",
-    ") {x + y}\n"
-))
-source(tc, local = testEnv, keep.source = TRUE)
-close(tc)
-testWrap <- testEnv$testFunc \%->\% "posInt"
+testWrap <- (function(
+    x = 1, #: posInt
+    y = 2 #: posInt
+) {x + y}) \%->\% "posInt"
 ## valid args
 testWrap()
 testWrap(x = 5)
