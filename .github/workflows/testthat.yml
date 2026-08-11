@@ -20,9 +20,6 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-22.04
-    env:
-      R_KEEP_SOURCE: yes
-      R_KEEP_PKG_SOURCE: yes
     strategy:
       fail-fast: true
       matrix:
@@ -50,5 +47,12 @@ jobs:
         
       - name: Check
         run: |
-          rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "error")
+          rcmdcheck::rcmdcheck(
+            args = c("--no-manual", "--install-args=--with-keep.source"),
+            error_on = "error",
+            env = c(
+              R_KEEP_SOURCE = "TRUE",
+              R_KEEP_PKG_SOURCE = "TRUE"
+            )
+          )
         shell: Rscript {0}
