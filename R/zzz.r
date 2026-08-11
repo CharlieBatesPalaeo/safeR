@@ -17,6 +17,6 @@
             new.env(parent = emptyenv()),
             envir = asNamespace("safeR")
         )
-    }s
+    }
     invisible()
 }
