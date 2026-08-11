@@ -46,9 +46,15 @@ jobs:
         shell: Rscript {0}
         
       - name: Check
+        env:
+          R_PROFILE_USER: ${{ github.workspace }}/.github/Rprofile
         run: |
           rcmdcheck::rcmdcheck(
-            args = "--no-manual",
-            error_on = "error"
+            args = c("--no-manual", "--install-args=--with-keep.source"),
+            error_on = "error",
+            env = c(
+              R_KEEP_SOURCE = "TRUE",
+              R_KEEP_PKG_SOURCE = "TRUE"
+            )
           )
         shell: Rscript {0}
