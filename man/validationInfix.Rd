@@ -39,8 +39,9 @@ Syntax for using \%->\% is as follows:
 Here, the '#:' pattern is used to signal arguments of \code{lhs} to validate, with the target class specified
 after the pattern. The target class for output validation is specified, as a character string, after the \%->\%
 operator.
-IMPORTANT: to use \%->\% in non-interactive mode. For {source()}, set the option \code{keep.source = TRUE}. For
-{Rscript} and {R CMD BATCH}, set the environment variables \code{R_KEEP_SOURCE} amd \code{R_KEEP_PKG_SOURCE} to "yes".
+
+IMPORTANT: to use \%->\% in non-interactive mode. For \code{\link[=source]{source()}}, set the option \code{keep.source = TRUE}. For
+\code{\link[=Rscript]{Rscript()}} and 'R CMD BATCH', set the environment variables \code{R_KEEP_SOURCE} amd \code{R_KEEP_PKG_SOURCE} to "yes".
 }
 \examples{
 setClass(
