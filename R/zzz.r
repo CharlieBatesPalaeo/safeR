@@ -10,12 +10,6 @@
         options(safeR = TRUE)
     }
     # create the coercion environment cache within safeR namespace
-    if (!exists(".coercionEnvCache", envir = asNamespace("safeR"))) {
-        assign(
-            ".coercionEnvCache",
-            new.env(parent = emptyenv()),
-            envir = asNamespace("safeR")
-        )
-    }
+    .coercionEnvCache <- new.env(parent = emptyenv())
     invisible()
 }

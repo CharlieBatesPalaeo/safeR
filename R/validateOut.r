@@ -104,30 +104,3 @@ setMethod(
     formals(wrapper) <- fmls
     return(wrapper)
 }
-
-
-setClass(
-    "posInt",
-    contains = "integer",
-    validity = function(object) {
-        if (object < 0) stop("must be positive") else TRUE
-    }
-)
-setCoercion(
-    "numeric",
-    "posInt",
-    function(x) {
-        if (length(x) != 1 || !is.numeric(x)) stop("must be a single numeric value")
-        as(x, "posInt")
-    }
-)
-## aribtrary function to validate
-testFunc <- function(
-    x,
-    y ) {
-    print(x + y)
-}
-testWrap <- validateOut(
-    func = testFunc,
-    returnClass = "posInt"
-)
