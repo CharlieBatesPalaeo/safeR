@@ -48,11 +48,7 @@ jobs:
       - name: Check
         run: |
           rcmdcheck::rcmdcheck(
-            args = c("--no-manual", "--install-args=--with-keep.source"),
-            error_on = "error",
-            env = c(
-              R_KEEP_SOURCE = "TRUE",
-              R_KEEP_PKG_SOURCE = "TRUE"
-            )
+            args = "--no-manual",
+            error_on = "error"
           )
         shell: Rscript {0}
