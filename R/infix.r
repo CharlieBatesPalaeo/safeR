@@ -3,7 +3,7 @@
 #' @description infix operator for function validation
 #' 
 #' @param lhs a function to be validated
-#' @param rhs a character string corresponding to the target class to validate against
+#' @param rhs a character string corresponding to the target class to validate against.
 #' 
 #' @return validation wrapper of \code{lhs}.
 #' 
@@ -22,9 +22,10 @@
 #' after the pattern. The target class for output validation is specified, as a character string, after the %->%
 #' operator.
 #' 
-#' IMPORTANT: to use %->% in non-interactive mode. For [source()], set the option `keep.source = TRUE`. For
-#' [Rscript()] and 'R CMD BATCH', set the environment variables `R_KEEP_SOURCE` amd `R_KEEP_PKG_SOURCE` to "yes".
-#' 
+#' IMPORTANT: to use %->% in non-interactive mode, the keep.source must be set to TRUE. if using [source()], you can set
+#' keep.source = TRUE in the call. If using \code{Rscript} you will need to run with the following structure:
+#' \code{path/to/Rscript -e "options(keep.source = TRUE); source('path/to/script.R')"} (note '' within the -e argument and ""
+#' wrapping it).
 #' @examples
 ## define positive integer class with numeric coercion method
 #' setClass(

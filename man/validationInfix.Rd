@@ -15,7 +15,7 @@ lhs \%->\% rhs
 \arguments{
 \item{lhs}{a function to be validated}
 
-\item{rhs}{a character string corresponding to the target class to validate against}
+\item{rhs}{a character string corresponding to the target class to validate against.}
 }
 \value{
 validation wrapper of \code{lhs}.
@@ -40,8 +40,10 @@ Here, the '#:' pattern is used to signal arguments of \code{lhs} to validate, wi
 after the pattern. The target class for output validation is specified, as a character string, after the \%->\%
 operator.
 
-IMPORTANT: to use \%->\% in non-interactive mode. For \code{\link[=source]{source()}}, set the option \code{keep.source = TRUE}. For
-\code{\link[=Rscript]{Rscript()}} and 'R CMD BATCH', set the environment variables \code{R_KEEP_SOURCE} amd \code{R_KEEP_PKG_SOURCE} to "yes".
+IMPORTANT: to use \%->\% in non-interactive mode, the keep.source must be set to TRUE. if using \code{\link[=source]{source()}}, you can set
+keep.source = TRUE in the call. If using \code{Rscript} you will need to run with the following structure:
+\code{path/to/Rscript -e "options(keep.source = TRUE); source('path/to/script.R')"} (note '' within the -e argument and ""
+wrapping it).
 }
 \examples{
 setClass(
