@@ -136,7 +136,6 @@ setMethod(
                 # 2) addition validation
                 methods::validObject(args[[c]])
             }
-            print(args)
             # call
             res <- do.call(.target, args)
 
