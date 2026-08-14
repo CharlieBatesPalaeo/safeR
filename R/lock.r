@@ -19,13 +19,13 @@
 #' for a value-locked object \code{x} and function \code{func <- function(x) x <- y}, \code{func} will succeed,
 #' but an error will be thrown if the output of \code{func} is assinged to \code{x}.
 #' 
-#' \code{lockType()} and \code{lockValue()} are wrappers for \code{lock(x, lockValue = FALSE)} and
+#' \code{lockClass()} and \code{lockValue()} are wrappers for \code{lock(x, lockValue = FALSE)} and
 #' \code{lock(x, lockValue = TRUE)} respectively.
 #' 
 #' @examples
 ## type lock
 #' x <- 10
-#' lockType(x)
+#' lockClass(x)
 #' # value is mutable
 #' x <- 5
 #' # type is not
@@ -58,7 +58,7 @@
 #' ## locked and used within function
 #' w <- 10
 #' func <- function(w) {
-#'     lockType(w)
+#'     lockClass(w)
 #'     try(
 #'         w <- "notANumeric"
 #'     )
@@ -80,11 +80,7 @@ lock <- function(
     if ("name" %in% names(args)) name <- args$name else name <- deparse(substitute(x))
     # call type-safe wrapper
     # (see R/wrappers.r for caching logic)
-    out <- .getValidationWrapper(
-        name = "lock",
-        func = .lockInner,
-        lockValue = .makeSingleBool()
-    )(
+    out <- .lockInner(
         x = x,
         lockValue = lockValue,
         env = env,
@@ -95,7 +91,7 @@ lock <- function(
 # wrappers for value and type locking
 #' @rdname lock
 #' @export
-lockType <- function(x) lock(
+lockClass <- function(x) lock(
     x,
     lockValue = FALSE,
     env = parent.frame(),
@@ -141,14 +137,6 @@ lockValue <- function(x) lock(
         envir = env
     )
 
-    # error message
-    typeErr <- paste0(
-        "'",
-        name,
-        "' is locked to type '",
-        lockedBox$type,
-        "'"
-    )
     valErr <- paste0(
         "'",
         name,
@@ -170,23 +158,19 @@ lockValue <- function(x) lock(
                 stop(valErr)
             # else update value
             } else {
-                if (class(lockedObj) != lockedBox$type) {
-                    stop(typeErr)
-                }
+                # 1) check class compatibility (will coerce if possible)
+                lockedObj <- safeR:::.safeRCoerce(
+                    lockedObj,
+                    lockedBox$type
+                )
+                # 2) check class compatibility (will throw error if not compatible)
+                methods::validObject(lockedObj)
+                # 3) update value
                 lockedBox$val <- lockedObj
             }
             # return value silently
             invisible(lockedObj)
         },
         env
-    )
-}
-
-# fieldSchema for 'value'
-.makeSingleBool <- function() {
-    new(
-        "fieldSchema",
-        type = "logical",
-        validation = function(x) length(x) == 1
     )
 }

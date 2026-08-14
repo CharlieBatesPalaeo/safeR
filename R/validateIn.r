@@ -99,10 +99,10 @@ setMethod(
     if (length(missing)) stop(paste("unknown classes: ", paste(missing, collapse = ", ")))
 
     # create validation wrapper
-    wrapper <- function(...) {
+    wrapper <- rlang::inject(function(...) {
         # pull args from wrapper env
         args <- mget(
-            names(fmls),
+            names(formals()),
             envir = environment(),
             inherits = FALSE,
         )
@@ -110,19 +110,20 @@ setMethod(
         # exit early if safeR validation disabled
         if (getOption("safeR")) {
             # validate args
-            for (c in names(cls)) {
+            .cls <- !!cls
+            for (c in names(.cls)) {
                 # 1) coerce argument to target class
-                args[[c]] <- .safeRCoerce(
+                args[[c]] <- safeR:::.safeRCoerce(
                     args[[c]],
-                    cls[[c]]
+                    .cls[[c]]
                 )
                 # 2) addition validation
                 methods::validObject(args[[c]])
             }
         }
         # call
-        res <- do.call(func, args)
-    }
+        res <- do.call(!!func, args)
+    })
     # set wrapper formals to match those of func
     formals(wrapper) <- fmls
     return(wrapper)

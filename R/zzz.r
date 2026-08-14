@@ -9,13 +9,18 @@
     if (is.null(getOption("safeR"))) {
         options(
             safeR = TRUE,
-            keep.source = TRUE,
-            keep.source.pkgs = TRUE
-        )
+            keep.source = TRUE)
     }
     # create the coercion environment cache within safeR namespace
     if (!exists(".coercionEnvCache", envir = asNamespace("safeR"))) {
         assign(".coercionEnvCache",
+            new.env(parent = emptyenv()),
+            envir = asNamespace("safeR")
+        )
+    }
+    # create the validation wrapper cache within safeR namespace
+    if (!exists(".validationWrapperCache", envir = asNamespace("safeR"))) {
+        assign(".validationWrapperCache",
             new.env(parent = emptyenv()),
             envir = asNamespace("safeR")
         )

@@ -36,14 +36,9 @@ Syntax for using \%->\% is as follows:
 ) \{...\}) \%->\% "classC"
 }\if{html}{\out{</div>}}
 
-Here, the '#:' pattern is used to signal arguments of \code{lhs} to validate, with the target class specified
+Here, the '~' pattern is used to signal arguments of \code{lhs} to validate, with the target class specified
 after the pattern. The target class for output validation is specified, as a character string, after the \%->\%
 operator.
-
-IMPORTANT: to use \%->\% in non-interactive mode, the keep.source must be set to TRUE. if using \code{\link[=source]{source()}}, you can set
-keep.source = TRUE in the call. If using \code{Rscript} you will need to run with the following structure:
-\code{path/to/Rscript -e "options(keep.source = TRUE); source('path/to/script.R')"} (note '' within the -e argument and ""
-wrapping it).
 }
 \examples{
 setClass(
@@ -63,8 +58,8 @@ setCoercion(
 )
 ## aribtrary function to validate
 testWrap <- (function(
-    x = 1, #: posInt
-    y = 2 #: posInt
+    x = 1, ~ posInt
+    y = 2 ~ posInt
 ) {x + y}) \%->\% "posInt"
 ## valid args
 testWrap()

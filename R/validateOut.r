@@ -80,26 +80,26 @@ setMethod(
 ) {
     fmls <- formals(func)
     # create validation wrapper
-    wrapper <- function(...) {
+    wrapper <- rlang::inject(function(...) {
         # pull args from wrapper env
         args <- mget(
-            names(fmls),
+            names(formals()),
             envir = environment(),
             inherits = FALSE
         )
         # call
-        res <- do.call(func, args)
+        res <- do.call(!!func, args)
 
         # validate output
         # 1) check class compatibility (will coerce if possible)
-        res <- .safeRCoerce(
+        res <- safeR:::.safeRCoerce(
             res,
-            returnClass
+            !!returnClass
         )
         # 2) check validity
         methods::validObject(res)
         return(res)
-    }
+    })
     # set wrapper formals to match those of func
     formals(wrapper) <- fmls
     return(wrapper)
