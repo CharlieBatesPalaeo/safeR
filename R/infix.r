@@ -153,12 +153,15 @@ setMethod(
             res <- do.call(.target, args)
 
             # validate output
-            res <- safeR:::.safeRCoerce(
-                res,
-                !!rhs
-            )
-            # additional validation
-            methods::validObject(res)
+            if (!(rhs == "ANY")) {
+                # 1) coerce output to target class
+                res <- safeR:::.safeRCoerce(
+                    res,
+                    !!rhs
+                )
+                # 2) additional validation
+                methods::validObject(res)
+            }
             return(res)
         })
         # set wrapper formals to match those of func
