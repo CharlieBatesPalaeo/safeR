@@ -118,7 +118,7 @@ setMethod(
             .cls <- !!cls
             for (c in names(.cls)) {
                 # 1) coerce argument to target class
-                args[[c]] <- safeR:::.safeRCoerce(
+                args[[c]] <- .safeRCoerce(
                     args[[c]],
                     .cls[[c]]
                 )

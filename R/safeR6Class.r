@@ -166,7 +166,7 @@ setMethod(
                 } else {
                     if (getOption("safeR")) {
                         # 1) coerce argument to target class
-                        lockedObj <- safeR:::.safeRCoerce(
+                        lockedObj <- .safeRCoerce(
                             lockedObj,
                             private[[!!paste0(c, "Locked")]]$class
                         )
@@ -194,7 +194,7 @@ setMethod(
         for (c in names(.inCls)) {
             if (getOption("safeR")) {
                 # 1) coerce argument to target class
-                args[[c]] <- safeR:::.safeRCoerce(
+                args[[c]] <- .safeRCoerce(
                     args[[c]],
                     .inCls[[c]]
                 )

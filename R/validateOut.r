@@ -101,7 +101,7 @@ setMethod(
         # validate output
         if (getOption("safeR")) {
             # 1) check class compatibility (will coerce if possible)
-            res <- safeR:::.safeRCoerce(
+            res <- .safeRCoerce(
                 res,
                 !!returnClass
             )

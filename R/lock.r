@@ -159,7 +159,7 @@ lockValue <- function(x) lock(
             # else update value
             } else {
                 # 1) check class compatibility (will coerce if possible)
-                lockedObj <- safeR:::.safeRCoerce(
+                lockedObj <- .safeRCoerce(
                     lockedObj,
                     lockedBox$type
                 )
