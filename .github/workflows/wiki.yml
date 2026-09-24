@@ -1,0 +1,106 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+#
+# See https://github.com/r-lib/actions/tree/master/examples#readme for
+# additional example workflows available for the R community.
+
+name: wiki
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+ publish-wiki:
+    runs-on: ubuntu-24.04
+    
+    permissions:
+          contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-r@v2
+
+      - name: Convert Rd files to Wiki pages
+        shell: Rscript {0}
+        run: |
+          rd_files <- list.files(
+            "man",
+            pattern = "\\.Rd$",
+            full.names = TRUE
+          )
+      
+          if (length(rd_files) == 0) {
+            stop("No .Rd files found in man/")
+          }
+      
+          dir.create("wiki-rendered", showWarnings = FALSE)
+      
+          for (f in rd_files) {
+      
+            page_name <- tools::file_path_sans_ext(basename(f))
+      
+            outfile <- file.path(
+              "wiki-rendered",
+              paste0(page_name, ".md")
+            )
+      
+            message("Converting ", f, " -> ", outfile)
+            
+            # Convert Rd to HTML
+            tmp <- tempfile(fileext = ".html")
+      
+            tools::Rd2HTML(
+              Rd = f,
+              out = tmp,
+              fragment = FALSE,
+              package = "",
+              standalone = FALSE
+            )
+      
+            html <- readLines(tmp, warn = FALSE)
+      
+            # GitHub Markdown allows embedded HTML
+            writeLines(
+              c(
+                paste0("# ", page_name),
+                "",
+                html
+              ),
+              outfile
+            )
+          }
+      
+          message("Generated Wiki pages:")
+          print(list.files("wiki-rendered"))
+      - name: Publish to GitHub Wiki
+        env:
+          WIKI_TOKEN: ${{ secrets.WIKI_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          git clone \
+            "https://x-access-token:${WIKI_TOKEN}@github.com/${REPOSITORY}.wiki.git" \
+            wiki-repo
+
+          # Copy generated documentation into the Wiki.
+          # Existing pages with the same names are updated.
+          # Other Wiki pages, such as Home.md, are preserved.
+          cp wiki-rendered/*.md wiki-repo/
+
+          cd wiki-repo
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add .
+
+          if ! git diff --cached --quiet; then
+            git commit -m "Update wiki from Rd documentation"
+            git push
+          fi
