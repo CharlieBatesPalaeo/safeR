@@ -40,7 +40,7 @@
 #' )
 #' ## aribtrary function to validate
 #' testWrap <- (function(
-#'     x = 1, ~ posInt
+#'     x = 1 ~ posInt,
 #'     y = 2 ~ posInt
 #' ) {x + y}) %->% "posInt"
 #' ## valid args
@@ -149,6 +149,8 @@ setMethod(
                 res,
                 !!rhs
             )
+            # additional validation
+            methods::validObject(res)
         })
         # set wrapper formals to match those of func
         formals(wrapper) <- fmls
