@@ -145,7 +145,7 @@ setMethod(
                     eval(call("force", as.name(c)), envir = environment())
                 }
                 # 1) coerce argument to target class
-                args[[c]] <- safeR:::.safeRCoerce(
+                args[[c]] <- .safeRCoerce(
                     args[[c]],
                     .inCls[[c]]
                 )
@@ -156,9 +156,9 @@ setMethod(
             res <- do.call(.target, args)
 
             # validate output
-            if (!(rhs == "ANY")) {
+            if (!(!!rhs == "ANY")) {
                 # 1) coerce output to target class
-                res <- safeR:::.safeRCoerce(
+                res <- .safeRCoerce(
                     res,
                     !!rhs
                 )
