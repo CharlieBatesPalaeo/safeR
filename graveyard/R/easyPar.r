@@ -31,13 +31,7 @@ setMethod(
         nCores
     ) {
         # grab and run validation wrapper
-        out <- .getValidationWrapper(
-            name = "easyPar",
-            func = .easyParInner,
-            iterables = .makeIterablesList(),
-            iterType = .makeIterType(),
-            nCores = .makeNCores()
-        )(
+        out <- .easyParInner(
             func = func,
             iterables = iterables,
             iterType = iterType,
@@ -173,36 +167,4 @@ setMethod(
         }
     }
     return(fixed)
-}
-
-# fieldSchemas for easyPar
-.makeIterablesList <- function() {
-    new(
-        "fieldSchema",
-        type = "list",
-        validation = function(x) {
-            # check x is a list of iterable objects
-            all(class(x) == "list" && length(x) > 0 && all(vapply(x, function(y) is.vector(y) || is.factor(y), logical(1))))
-        }
-    ) 
-}
-
-.makeIterType <- function() {
-    new(
-        "fieldSchema",
-        type = "character",
-        validation = function(x) {
-            x %in% c("pairwise", "combinatorial")
-        }
-    )
-}
-
-.makeNCores <- function() {
-    new(
-        "fieldSchema",
-        type = "numeric",
-        validation = function(x) {
-            is.numeric(x) && x > 0 && x == as.integer(x)
-        }
-    )
 }

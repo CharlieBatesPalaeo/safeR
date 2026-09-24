@@ -114,10 +114,15 @@ setMethod(
         # create validation wrapper
         wrapper <- rlang::inject(function(...) {
             # pull args from wrapper env
-            args <- mget(
-                names(formals()),
-                envir = environment(),
-                inherits = FALSE,
+            args <- tryCatch(
+                mget(
+                    names(formals()),
+                    envir = environment(),
+                    inherits = FALSE
+                ),
+                error = function(e) {
+                    list()
+                }
             )
             # lhs function with correct enclosing env
             .target <- !!lhs

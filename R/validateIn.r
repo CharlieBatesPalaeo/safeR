@@ -101,10 +101,15 @@ setMethod(
     # create validation wrapper
     wrapper <- rlang::inject(function(...) {
         # pull args from wrapper env
-        args <- mget(
-            names(formals()),
-            envir = environment(),
-            inherits = FALSE,
+        args <- tryCatch(
+            mget(
+                names(formals()),
+                envir = environment(),
+                inherits = FALSE
+            ),
+            error = function(e) {
+                list()
+            }
         )
 
         # exit early if safeR validation disabled
@@ -121,8 +126,11 @@ setMethod(
                 methods::validObject(args[[c]])
             }
         }
+        # func with correct enclosing env
+        .target <- !!func
+        environment(.target) <- environment(sys.function())
         # call
-        res <- do.call(!!func, args)
+        res <- do.call(.target, args)
     })
     # set wrapper formals to match those of func
     formals(wrapper) <- fmls

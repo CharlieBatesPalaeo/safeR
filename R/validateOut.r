@@ -82,22 +82,32 @@ setMethod(
     # create validation wrapper
     wrapper <- rlang::inject(function(...) {
         # pull args from wrapper env
-        args <- mget(
-            names(formals()),
-            envir = environment(),
-            inherits = FALSE
+        args <- tryCatch(
+            mget(
+                names(formals()),
+                envir = environment(),
+                inherits = FALSE
+            ),
+            error = function(e) {
+                list()
+            }
         )
+        # func with correct enclosing env
+        .target <- !!func
+        environment(.target) <- environment(sys.function())
         # call
-        res <- do.call(!!func, args)
+        res <- do.call(.target, args)
 
         # validate output
-        # 1) check class compatibility (will coerce if possible)
-        res <- safeR:::.safeRCoerce(
-            res,
-            !!returnClass
-        )
-        # 2) check validity
-        methods::validObject(res)
+        if (getOption("safeR")) {
+            # 1) check class compatibility (will coerce if possible)
+            res <- safeR:::.safeRCoerce(
+                res,
+                !!returnClass
+            )
+            # 2) check validity
+            methods::validObject(res)
+        }
         return(res)
     })
     # set wrapper formals to match those of func
