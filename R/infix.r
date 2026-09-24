@@ -95,7 +95,11 @@ setMethod(
         fmls <- lapply(
             fmls,
             function(x) {
-                if (is.call(x) && identical(x[[1L]], quote(`~`)) && length(x) == 3L) {
+                if (is.call(x) && identical(x[[1L]], quote(`~`)) && length(x) == 3L){
+                    # no default if ANY specified
+                    if (identical(x[[2L]], quote(ANY))) {
+                        return(quote(expr = ))
+                    }
                     x[[2L]]
                 } else {
                     x
@@ -133,6 +137,10 @@ setMethod(
             # validate args
             .inCls <- !!inCls
             for (c in names(.inCls)) {
+                # force evaluation of any arguments with no default (= ANY)
+                if (identical(args[[c]], quote(expr = ))) {
+                    eval(call("force", as.name(c)), envir = environment())
+                }
                 # 1) coerce argument to target class
                 args[[c]] <- safeR:::.safeRCoerce(
                     args[[c]],
@@ -151,6 +159,7 @@ setMethod(
             )
             # additional validation
             methods::validObject(res)
+            return(res)
         })
         # set wrapper formals to match those of func
         formals(wrapper) <- fmls
