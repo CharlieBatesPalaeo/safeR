@@ -21,6 +21,9 @@
 #' Here, the '~' pattern is used to signal arguments of \code{lhs} to validate, with the target class specified
 #' after the pattern. The target class for output validation is specified, as a character string, after the %->%
 #' operator.
+#' 
+#' Setting the default of an argument to ANY (i.e. \code{x = ANY ~ classA}) will force evaluation of the argument, even if it is not provided by the user.
+#' Likewise, setting the output target class to "ANY" (i.e. \code{%->% "ANY"}) will disable output validation, allowing the user to only validate inputs.
 #' @examples
 ## define positive integer class with numeric coercion method
 #' setClass(
