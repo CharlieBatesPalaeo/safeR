@@ -18,12 +18,5 @@
             envir = asNamespace("safeR")
         )
     }
-    # create the validation wrapper cache within safeR namespace
-    if (!exists(".validationWrapperCache", envir = asNamespace("safeR"))) {
-        assign(".validationWrapperCache",
-            new.env(parent = emptyenv()),
-            envir = asNamespace("safeR")
-        )
-    }
     invisible()
 }
