@@ -58,6 +58,14 @@ setMethod(
     # set up subprocess environment
     cl <- parallel::makeCluster(nCores)
     on.exit(parallel::stopCluster(cl), add = TRUE)
+    # load safeR
+    parallel::clusterEvalQ(
+        cl,
+        {
+            library("safeR")
+            invisible(NULL)
+        }
+    )
     parallel::clusterExport(
         cl,
         varlist = userFuncs,
@@ -68,7 +76,32 @@ setMethod(
         varlist = fixedArgs,
         envir = parent.frame()
     )
-    
+    #### temp
+    parallel::clusterEvalQ(
+        cl,
+        {
+            setClass(
+                "posInt",
+                contains = "integer",
+                validity = function(object) {
+                    if (object < 0) stop("must be positive") else TRUE
+                }
+            )
+
+            safeR::setCoercion(
+                "numeric",
+                "posInt",
+                function(x) {
+                    if (length(x) != 1 || !is.numeric(x))
+                        stop("must be a single numeric value")
+                    as(x, "posInt")
+                }
+            )
+
+            invisible(NULL)
+        }
+    )
+
     # create list of iterables
     iterablesMatrix <- switch(
         iterType,
