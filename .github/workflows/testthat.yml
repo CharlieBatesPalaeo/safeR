@@ -42,13 +42,12 @@ jobs:
           sudo apt-get install -y libcurl4-openssl-dev libuv1-dev
           
       - name: Install dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
         env:
           GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          options(repos = c(CRAN = "https://cloud.r-project.org"))
-          install.packages(c("remotes", "rcmdcheck"))
-          remotes::install_deps(dependencies = TRUE)
-        shell: Rscript {0}
+        with:
+          extra-packages: any::rcmdcheck
+          needs: check
         
       - name: Check
         env:
