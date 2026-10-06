@@ -12,7 +12,6 @@ Description: The safeR package provides a set of tools for strict type
     functions are also provided.
 License: GPL (>= 3)
 Imports:
-    dequer,
     methods,
     parallel,
     processx,
@@ -20,6 +19,8 @@ Imports:
     rlang,
     stats,
     utils
+Remotes:
+    wrathematics/dequer
 Suggests: 
     testthat (>= 3.0.0)
 Config/roxygen2/version: 8.0.0
