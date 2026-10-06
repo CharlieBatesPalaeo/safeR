@@ -57,7 +57,7 @@
       "RemoteHost": "api.github.com",
       "RemoteRepo": "dequer",
       "RemoteUsername": "wrathematics",
-      "RemoteRef": "HEAD",
+      "RemoteRef": "1a99c733860f4854f71fb642584e73814a5ff084",
       "RemoteSha": "1a99c733860f4854f71fb642584e73814a5ff084"
     },
     "processx": {

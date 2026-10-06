@@ -1,6 +1,6 @@
 Package: safeR
 Title: Strict Type Checking for R
-Version: 1.0.0.0000
+Version: 1.0.0
 Authors@R: 
     person("Charles", "Bates", , "charles.bates@earth.ox.ac.uk", role = c("aut", "cre"),
            comment = c(ORCID = "0009-0000-8444-6322"))
@@ -10,6 +10,8 @@ Description: The safeR package provides a set of tools for strict type
     checking in R.  It allows users to define custom classes and enforce
     type constraints on function inputs and outputs. Other utility
     functions are also provided.
+URL: https://github.com/CharlieBatesPalaeo/safeR
+BugReports: https://github.com/CharlieBatesPalaeo/safeR/issues
 License: GPL (>= 3)
 Imports:
     dequer,
@@ -21,7 +23,7 @@ Imports:
     stats,
     utils
 Remotes:
-    wrathematics/dequer
+    wrathematics/dequer@1a99c733860f4854f71fb642584e73814a5ff084
 Suggests: 
     testthat (>= 3.0.0)
 Config/roxygen2/version: 8.0.0

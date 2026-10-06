@@ -1,10 +1,10 @@
 #' setSafeParErrorMode
 #' @description sets the safeR global option.
 #' 
-#' @param x logical value specifying the safeR option to set. Must be one of TRUE or FALSE.
+#' @param x character string specifying the error mode. Must be one of "first" or "all".
 #' 
-#' @details the safeR global option controls the behaviour of safeR validation.
-#' If set to FALSE, safeR validation is disabled and all safeR functions will behave as their base R equivalents.
+#' @details The error mode controls whether [safePar()] stops after the first child-process
+#' error or collects errors from all iterations.
 #' 
 #' @examples
 #' ## set safeR option to strict

@@ -49,7 +49,7 @@ jobs:
         
       - name: Check
         env:
-          R_PROFILE_USER: ${{ github.workspace }}/.github/Rprofile
+          R_PROFILE_USER: ${{ github.workspace }}/.github/.Rprofile
         run: |
           rcmdcheck::rcmdcheck(
             args = c("--no-manual", "--install-args=--with-keep.source"),

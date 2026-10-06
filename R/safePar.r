@@ -1,5 +1,5 @@
 #' safePar
-#' @description parellisation for functions with (and without) safeR validation logic.
+#' @description parallelisation for functions with (and without) safeR validation logic.
 #' 
 #' @param func function to be executed in parallel.
 #' @param iterables named list of iterables to be passed into func. Names must match argument
@@ -10,7 +10,7 @@
 #' 
 #' @return [safeParResults-class] object containing the results of the parallelised function calls.
 #' 
-#' @details Parallisation is sub-process-based as this is suitable for all operating systems and is more predictable than forking,
+#' @details Parallelisation is sub-process-based as this is suitable for all operating systems and is more predictable than forking,
 #' especially in terms of memory footprint.
 #' 
 #' Fixed arguments for \code{func} (i.e. those not specified in \code{iterables}) should be set as default values
@@ -22,7 +22,7 @@
 #' functions executed in parallel.
 #' 
 #' Error handling can be set using the global option \code{safeParErrorMode}, which can be set to either "first" or "all". In "first
-#' mode, the first error encountered will be returned to the user, while in "fast" mode, all errors will be returned to the user after
+#' mode, the first error encountered will be returned to the user, while in "all" mode, all errors will be returned to the user after
 #' all iterations have completed. This can be changed with [setSafeParErrorMode()]. If using \code{"all"}, per-child-process error
 #' messages can be accessed using [safeParTraceback()].
 #'
@@ -43,7 +43,7 @@
 #'         as(x, "posInt")
 #'     }
 #' )
-#' ## aribtrary function to validate
+#' ## arbitrary function to validate
 #' A = 10
 #' testWrap <- (function(
 #'     x = 1 ~ posInt,
@@ -152,8 +152,11 @@ methods::setMethod(
         safeR = getOption("safeR"),
         safeParErrorMode = getOption("safeParErrorMode")
     )
+    tempFiles <- character()
+    on.exit(unlink(tempFiles), add = TRUE)
     # create temp file
     env <- tempfile(fileext = ".rds")
+    tempFiles <- c(tempFiles, env)
     saveRDS(
         list(
             func = func,
@@ -226,7 +229,7 @@ methods::setMethod(
                     # check for errors
                     if (active[[a]]$get_exit_status() != 0) {
                         # depending on safeParErrorMode
-                        if (getOption("safeParErrorMode") == "fast") {
+                        if (getOption("safeParErrorMode") == "first") {
                             err <- active[[a]]$read_error_lines()
                             stop(
                                 "Error occurred in iteration ", a, ":\n",
@@ -248,12 +251,14 @@ methods::setMethod(
         }
         # create temp file for iterables
         iter <- tempfile(fileext = ".rds")
+        tempFiles <- c(tempFiles, iter)
         saveRDS(
             as.list(iterablesMatrix[i, , drop = TRUE]),
             file = iter
         )
         # create temp file for output
         out <- tempfile(fileext = ".rds")
+        tempFiles <- c(tempFiles, out)
         resPaths[[i]] <- out
         # run sub-process
         options(callr.traceback = TRUE)

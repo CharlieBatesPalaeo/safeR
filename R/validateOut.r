@@ -25,7 +25,7 @@
 #'         as(x, "posInt")
 #'     }
 #' )
-#' ## aribtrary function to validate
+#' ## arbitrary function to validate
 #' testFunc <- function(
 #'     x,
 #'     y ) {

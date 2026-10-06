@@ -77,7 +77,7 @@
 
 
 #################
-### defintion ###
+### definition ###
 #################
 ## public namespace function
 # generic + type error
