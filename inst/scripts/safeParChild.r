@@ -17,8 +17,6 @@ options(error = function() {
 ##############
 library(safeR)
 
-print(B)
-
 ###########################
 # load env and fixed args #
 ###########################
