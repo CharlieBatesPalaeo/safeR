@@ -12,6 +12,7 @@ Description: The safeR package provides a set of tools for strict type
     functions are also provided.
 License: GPL (>= 3)
 Imports:
+    dequer,
     methods,
     parallel,
     processx,
