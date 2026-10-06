@@ -26,7 +26,7 @@ setCoercion(
         as(x, "posInt")
     }
 )
-## aribtrary function to validate
+## arbitrary function to validate
 setSafeParErrorMode("all")
 A = "not a posInt"
 testWrap <- (function(

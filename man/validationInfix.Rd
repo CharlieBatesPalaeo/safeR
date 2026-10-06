@@ -26,7 +26,7 @@ infix operator for function validation
 \details{
 Applies both input and output validation to \code{lhs}, with syntax emulating that used
 for static type checking in languages such as C++, Java, and Rust. Validation is strict, with coercion
-only permitted where acoercion method between two classes has been defined by the user (for base R classes,
+only permitted where a coercion method between two classes has been defined by the user (for base R classes,
 default coercion methods are ignored).
 Syntax for using \%->\% is as follows:
 
@@ -59,7 +59,7 @@ setCoercion(
         as(x, "posInt")
     }
 )
-## aribtrary function to validate
+## arbitrary function to validate
 testWrap <- (function(
     x = 1 ~ posInt,
     y = 2 ~ posInt

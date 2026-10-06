@@ -34,10 +34,10 @@ names of \code{func}.#}
 \link[=safeParResults-class]{safeParResults} object containing the results of the parallelised function calls.
 }
 \description{
-parellisation for functions with (and without) safeR validation logic.
+parallelisation for functions with (and without) safeR validation logic.
 }
 \details{
-Parallisation is sub-process-based as this is suitable for all operating systems and is more predictable than forking,
+Parallelisation is sub-process-based as this is suitable for all operating systems and is more predictable than forking,
 especially in terms of memory footprint.
 
 Fixed arguments for \code{func} (i.e. those not specified in \code{iterables}) should be set as default values
@@ -49,7 +49,7 @@ and defined coercion methods will be passed into child processes. This allows fo
 functions executed in parallel.
 
 Error handling can be set using the global option \code{safeParErrorMode}, which can be set to either "first" or "all". In "first
-mode, the first error encountered will be returned to the user, while in "fast" mode, all errors will be returned to the user after
+mode, the first error encountered will be returned to the user, while in "all" mode, all errors will be returned to the user after
 all iterations have completed. This can be changed with \code{\link[=setSafeParErrorMode]{setSafeParErrorMode()}}. If using \code{"all"}, per-child-process error
 messages can be accessed using \code{\link[=safeParTraceback]{safeParTraceback()}}.
 }
@@ -69,7 +69,7 @@ setCoercion(
         as(x, "posInt")
     }
 )
-## aribtrary function to validate
+## arbitrary function to validate
 A = 10
 testWrap <- (function(
     x = 1 ~ posInt,

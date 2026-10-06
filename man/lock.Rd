@@ -31,7 +31,7 @@ or the original value of \code{x}, depending on the type of lock.
 
 Locked objects will only remain locked within the environment they are created within. For example,
 for a value-locked object \code{x} and function \code{func <- function(x) x <- y}, \code{func} will succeed,
-but an error will be thrown if the output of \code{func} is assinged to \code{x}.
+but an error will be thrown if the output of \code{func} is assigned to \code{x}.
 
 \code{lockClass()} and \code{lockValue()} are wrappers for \code{lock(x, lockValue = FALSE)} and
 \code{lock(x, lockValue = TRUE)} respectively.

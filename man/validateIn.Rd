@@ -24,8 +24,8 @@ creates wrapper for functions that validates inputs against class definitions.
 \details{
 Any number of the arguments can be validated, but all target classes must match a declared
 argument of \code{func}. Wrapper formals will match those of \code{func}, ignoring class defaults
-(i.e. prototypes). This is done to avoid issues stemming from the propogation of base R defaults -
-it is safer to raise errors where necesarry arguments are not provided than assume base R defaults are
+(i.e. prototypes). This is done to avoid issues stemming from the propagation of base R defaults -
+it is safer to raise errors where necessary arguments are not provided than assume base R defaults are
 appropriate.
 }
 \examples{
@@ -45,7 +45,7 @@ setCoercion(
         as(x, "posInt")
     }
 )
-## aribtrary function to validate
+## arbitrary function to validate
 testFunc <- function(
     x= 1,
     y = 2) {
