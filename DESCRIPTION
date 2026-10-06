@@ -1,6 +1,6 @@
 Package: safeR
 Title: Strict Type Checking for R
-Version: 0.0.0.9000
+Version: 1.0.0.0000
 Authors@R: 
     person("Charles", "Bates", , "charles.bates@earth.ox.ac.uk", role = c("aut", "cre"),
            comment = c(ORCID = "0009-0000-8444-6322"))
