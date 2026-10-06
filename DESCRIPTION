@@ -3,18 +3,27 @@ Title: Strict Type Checking for R
 Version: 0.0.0.9000
 Authors@R: 
     person("Charles", "Bates", , "charles.bates@earth.ox.ac.uk", role = c("aut", "cre"),
-    comment = c(ORCID = "0009-0000-8444-6322"))
-Description: 
-    The safeR package provides a set of tools for strict type checking in R. 
-    It allows users to define custom classes and enforce type constraints on function inputs and outputs. Other utility functions are also provided.
+           comment = c(ORCID = "0009-0000-8444-6322"))
+Author: Charles Bates [aut, cre]
+Maintainer: Charles Bates <charles.bates@earth.ox.ac.uk>
+Description: The safeR package provides a set of tools for strict type
+    checking in R.  It allows users to define custom classes and enforce
+    type constraints on function inputs and outputs. Other utility
+    functions are also provided.
 License: GPL (>= 3)
-Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
-Config/roxygen2/version: 8.0.0
 Imports:
+    dequer,
+    methods,
+    parallel,
+    processx,
+    R6,
     rlang,
-    methods
+    stats,
+    utils
 Suggests: 
     testthat (>= 3.0.0)
+Config/roxygen2/version: 8.0.0
 Config/testthat/edition: 3
+Encoding: UTF-8
 KeepSource: yes
+Roxygen: list(markdown = TRUE)

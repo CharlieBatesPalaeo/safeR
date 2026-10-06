@@ -3,7 +3,16 @@
 \docType{class}
 \name{safeParResults-class}
 \alias{safeParResults-class}
+\alias{[,safeParResults,numeric-method}
 \title{safeParResults}
+\usage{
+\S4method{[}{safeParResults,numeric}(x, i)
+}
+\arguments{
+\item{x}{A safeParResults object.}
+
+\item{i}{A numeric iteration index.}
+}
 \description{
 Class to store results from \code{\link[=safePar]{safePar()}}
 }

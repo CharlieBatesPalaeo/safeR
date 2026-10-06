@@ -49,7 +49,12 @@ methods::setMethod(
     }
 )
 
-# indexing method
+#' Extract results by iteration index.
+#'
+#' @rdname safeParResults-class
+#' @aliases [,safeParResults,numeric-method
+#' @param x A safeParResults object.
+#' @param i A numeric iteration index.
 methods::setMethod(
     "[",
     signature(

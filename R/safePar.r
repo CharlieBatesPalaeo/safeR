@@ -309,7 +309,7 @@ methods::setMethod(
     }
     ## format results
     # new safeParResults object
-    out <- new(
+    out <- methods::new(
         "safeParResults",
         func = func,
         fixedArgs = fixedArgs,
@@ -424,7 +424,7 @@ methods::setMethod(
 
 # sub-function for identifying user-defined classes
 .getUserClass <- function(x) {
-    s4 <- getClassDef(x, where = .GlobalEnv, inherits = FALSE)
+    s4 <- methods::getClassDef(x, where = .GlobalEnv, inherits = FALSE)
     if (!is.null(s4))
         return(s4)
 
