@@ -3,11 +3,22 @@
 ### user-defined objects, and runs one iteration of the specified function. The output is written to a temporary file,  ###
 ### which is then read by the parent process.                                                                           ###
 ###########################################################################################################################
+#################
+# format errors #
+#################
+options(error = function() {
+    cat("\n--- TRACEBACK ---\n", file = stderr())
+    traceback(2)
+    quit(save = "no", status = 1)
+})
 
 ##############
 # load safeR #
 ##############
 library(safeR)
+
+print(B)
+
 ###########################
 # load env and fixed args #
 ###########################
@@ -17,10 +28,14 @@ fixedVars <- readRDS(fixedPath)
 # extract func
 assign('func', fixedVars$func, envir = .GlobalEnv)
 # extract fixed args
+fixedArgs <- fixedVars$fixedArgs
+list2env(fixedArgs, envir = .GlobalEnv)
+
+# extract user objects
 userObjs <- fixedVars$userObjs
 for (nm in names(userObjs)) {
     obj <- userObjs[[nm]]
-    assign(nm, obj, envir = .GlobalEnv
+    assign(nm, obj, envir = .GlobalEnv)
     if (methods::isClassDef(obj)) {
         methods::assignClassDef(nm, obj, where = .GlobalEnv)
         methods::getClass(nm, where = .GlobalEnv)
@@ -29,10 +44,10 @@ for (nm in names(userObjs)) {
 # extract coercion cache
 cache <- get('.coercionEnvCache', envir = asNamespace('safeR'))
 for (target in names(fixedVars$coercions)) {
-    targetEnv <- new.env(parent = .GlobalEnv
+    targetEnv <- new.env(parent = .GlobalEnv)
     for (input in names(fixedVars$coercions[[target]])) {
         bundle <- fixedVars$coercions[[target]][[input]]
-        funEnv <- list2env(bundle$bindings, parent = .GlobalEnv
+        funEnv <- list2env(bundle$bindings, parent = .GlobalEnv)
         fun <- bundle$fun
         environment(fun) <- funEnv
         assign(input, fun, envir = targetEnv)
@@ -45,7 +60,7 @@ for (target in names(fixedVars$coercions)) {
 # read temp file
 iterPath <- commandArgs(trailingOnly = TRUE)[2]
 iterRow <- readRDS(iterPath)
-iterRow <- list2env(iterRow, envir = .GlobalEnv)
+list2env(iterRow, envir = .GlobalEnv)
 
 ###############
 # load output #
@@ -58,7 +73,7 @@ mc <- match.call(
     func,
     call = as.call(c(
         list(quote(func)),
-        as.list(iterVars)
+        as.list(iterRow)
     )),
     expand.dots = FALSE
 )
@@ -66,5 +81,4 @@ out <- eval(mc)
 ###################
 # write to output #
 ###################
-# get idx
-i <- as.numeric(commandArgs(trailingOnly = TRUE)[4])
+saveRDS(out, file = outPath)

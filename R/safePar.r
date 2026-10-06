@@ -1,28 +1,96 @@
 #' safePar
+#' @description parellisation for functions with (and without) safeR validation logic.
 #' 
+#' @param func function to be executed in parallel.
+#' @param iterables named list of iterables to be passed into func. Names must match argument
+#' names of \code{func}.#
+#' @param iterType character string specifying how to iterate over the iterables. Must be one of
+#' "pairwise" or "combinatorial".
+#' @param nCores positive integer specifying the number of cores to use for parallelisation.
+#' 
+#' @return [safeParResults-class] object containing the results of the parallelised function calls.
+#' 
+#' @details Parallisation is sub-process-based as this is suitable for all operating systems and is more predictable than forking,
+#' especially in terms of memory footprint.
+#' 
+#' Fixed arguments for \code{func} (i.e. those not specified in \code{iterables}) should be set as default values
+#' in the function definition.
+#' 
+#' User-defined global objects, functions, and classes utilised by \code{func}, or any lower-level functions called by \code{func},
+#' will be automatically extracted and passed into child processes. Likewise, the parent safeR environment, including global options 
+#' and defined coercion methods will be passed into child processes. This allows for safeR validation logic to be applied to
+#' functions executed in parallel.
+#' 
+#' Error handling can be set using the global option \code{safeParErrorMode}, which can be set to either "first" or "all". In "first
+#' mode, the first error encountered will be returned to the user, while in "fast" mode, all errors will be returned to the user after
+#' all iterations have completed. This can be changed with [setSafeParErrorMode()]. If using \code{"all"}, per-child-process error
+#' messages can be accessed using [safeParTraceback()].
+#'
+#' @examples
+## define positive integer class with numeric coercion method
+#' setClass(
+#'     "posInt",
+#'     contains = "integer",
+#'     validity = function(object) {
+#'         if (object < 0) stop("must be positive") else TRUE
+#'     }
+#' )
+#' setCoercion(
+#'     "numeric",
+#'     "posInt",
+#'     function(x) {
+#'         if (length(x) != 1 || !is.numeric(x)) stop("must be a single numeric value")
+#'         as(x, "posInt")
+#'     }
+#' )
+#' ## aribtrary function to validate
+#' A = 10
+#' testWrap <- (function(
+#'     x = 1 ~ posInt,
+#'     y = 2 ~ posInt,
+#'     a = A
+#' ) {as.numeric(x + y + a)}) %->% "posInt"
+#' ## run in parallel
+#' testPairwise <- safePar(
+#'     func = testWrap,
+#'     iterables = list(
+#'         x = c(1,2,3),
+#'         y = c(4,5,6)
+#'     ),
+#'     iterType = "pairwise",
+#'     nCores = 2
+#' )
+#' testCombinatorial <- safePar(
+#'     func = testWrap,
+#'     iterables = list(
+#'         x = c(1,2,3),
+#'         y = c(4,5,6)
+#'     ),
+#'     iterType = "combinatorial",
+#'     nCores = 2
+#' )
 ##################
 ### definition ###
 ##################
 #' @export
-setGeneric(
-    "easyPar",
+methods::setGeneric(
+    "safePar",
     function(
         func,
         iterables,
         iterType = "pairwise",
-        nCores = 1
+        nCores = parallel::detectCores()
     ) {
         stop("typeError: 'func' must be a function")
     }
 )
 
 # method for function
-#' @rdname easyPar
-#' @aliases easyPar,function-method
-#' @method easyPar function
+#' @rdname safePar
+#' @aliases safePar,function-method
 #' @export
-setMethod(
-    "easyPar",
+methods::setMethod(
+    "safePar",
     signature(func = "function"),
     definition = function(
         func,
@@ -30,13 +98,18 @@ setMethod(
         iterType,
         nCores
     ) {
-        # grab and run validation wrapper
+        # validate nCores
+        if (!is.numeric(nCores) || length(nCores) != 1 || nCores < 1) {
+            stop("argError: 'nCores' must be a positive integer")
+        }
+        # run internal function
         out <- .easyParInner(
             func = func,
             iterables = iterables,
             iterType = iterType,
             nCores = nCores
         )
+        return(out)
     }
 )
 
@@ -89,6 +162,10 @@ setMethod(
     #############
     # iterables #
     #############
+    # validate iterables
+    if (!(is.list(iterables) & all(names(iterables) %in% names(formals(func))))) {
+        stop("argError: 'iterables' must be a named list with names matching the arguments of 'func'")
+    }
     # create list of iterables
     iterablesMatrix <- switch(
         iterType,
@@ -105,61 +182,155 @@ setMethod(
                 iterables
             ),
             names(iterables)
-        )
-    ))
-    # create temp file
-    iters <- tempfile(fileext = ".rds")
-    saveRDS(
-        iterablesMatrix,
-        file = iters
+        )),
+        stop("valueError: 'iterType' must be one of 'pairwise' or 'combinatorial'")
     )
-
-    ###############
-    # output file #
-    ###############
-    out <- tempfile(fileext = ".rds")
-    outStruct <- cbind(
-        iter = seq(1, nrow(iterablesMatrix)),
-        iterablesMatrix,
-        result = rep(NA, nrow(iterablesMatrix))
-    )
-    View(outStruct)
-    saveRDS(
-        list(names = seq(1, nrow(iterablesMatrix))),
-        file = out
-    )
-
     #####################
     # run sub-processes #
     #####################
-    
-    ## test run
-    #out <- tempfile(fileext = ".rds")
- 
-    #p <- processx::process$new(
-    #    command = file.path(R.home("bin"), "Rscript"),
-    #    args = c(
-    #        run,
-    #        env,
-    #        iters,
-    #        i = 1,
-    #        out,
-    #    ),
-    #    stdout = "|",
-    #    stderr = "|"
-    #)
-    #p$wait()
-    #cat(p$read_all_output())
-    #cat(p$read_all_error())
- 
-    #print("after print...")
- 
-    #if (p$get_exit_status() != 0) {
-    #    cat(p$read_all_error())
-    #    stop("Subprocess failed")
-    #}
- 
-    #result <- readRDS(out)
+    ## list for outputs
+    resPaths <- list()
+    errors <- list()
+    ## init queues
+    # iterables
+    iterQueue <- dequer::queue()
+    sapply(
+        1:nrow(iterablesMatrix),
+        function(i) dequer::pushback(iterQueue, i)
+    )
+    # worker queue
+    workerQueue <- dequer::queue()
+    sapply(
+        1:nCores,
+        function(i) dequer::pushback(workerQueue, i)
+    )
+    active <- list()
+    ## run sub-processes
+    while (length(iterQueue) > 0) {
+        # get next iter row
+        i <- dequer::pop(iterQueue)
+        # wait for worker
+        w <- NULL
+        while (is.null(w)) {
+            # check for finished workers
+            for (a in names(active)) {
+                if (!active[[a]]$is_alive()) {
+                    # kill
+                    active[[a]]$wait()
+                    # check for errors
+                    if (active[[a]]$get_exit_status() != 0) {
+                        # depending on safeParErrorMode
+                        if (getOption("safeParErrorMode") == "fast") {
+                            err <- active[[a]]$read_error_lines()
+                            stop(
+                                "Error occurred in iteration ", a, ":\n",
+                                paste(err, collapse = "\n")
+                            )
+                        }
+                        errors[[paste0("iter", a)]] <- active[[a]]$read_error_lines()
+                    }
+                    # add worker back to queue
+                    dequer::pushback(workerQueue, as.numeric(a))
+                    # mark as inactive
+                    active[[a]] <- NULL
+                }
+            }
+            try(
+                w <- dequer::pop(workerQueue),
+                silent = TRUE
+            )
+        }
+        # create temp file for iterables
+        iter <- tempfile(fileext = ".rds")
+        saveRDS(
+            as.list(iterablesMatrix[i, , drop = TRUE]),
+            file = iter
+        )
+        # create temp file for output
+        out <- tempfile(fileext = ".rds")
+        resPaths[[i]] <- out
+        # run sub-process
+        options(callr.traceback = TRUE)
+        p <- processx::process$new(
+            command = file.path(R.home("bin"), "Rscript"),
+            args = c(
+                system.file(
+                    "scripts",
+                    "safeParChild.r",
+                    package = "safeR"
+                ),
+                env,
+                iter,
+                out
+            ),
+            stdout = "|",
+            stderr = "|"
+        )
+        # mark as active
+        active[[as.character(w)]] <- p
+    }
+    # wait for remaining workers to finish
+    while (length(active) > 0) {
+        # check for finished workers
+        for (a in names(active)) {
+            if (!active[[a]]$is_alive()) {
+                # kill
+                active[[a]]$wait()
+                # check for errors
+                if (active[[a]]$get_exit_status() != 0) {
+                    # depending on safeParErrorMode
+                    if (getOption("safeParErrorMode") == "first") {
+                        err <- active[[a]]$read_error_lines()
+                        stop(
+                            "Error occurred in iteration ", a, ":\n",
+                            paste(err, collapse = "\n")
+                        )
+                        }
+                    errors[[paste0("iter", a)]] <- active[[a]]$read_error_lines()
+                }
+                # mark as inactive
+                active[[a]] <- NULL
+            }
+        }
+    }
+    ##################
+    # error handling #
+    ##################
+    if (length(errors) > 0) {
+        # store errors in the package namespace
+        env <- get(".safeRState", envir = asNamespace("safeR"))
+        env$parErrors <- errors
+        # summary error message
+        stop(
+            "Errors occurred in the following iterations: ",
+            paste(names(errors), collapse = ", "),
+            ". Use safeParTraceback() to view individual error messages."
+        )
+    }
+    ## format results
+    # new safeParResults object
+    out <- new(
+        "safeParResults",
+        func = func,
+        fixedArgs = fixedArgs,
+        iterables = iterables,
+        iterType = iterType
+    )
+    # iterables as input indices
+    iterablesIdx <- apply(
+    iterablesMatrix,
+    2,
+    function(x) match(x, unique(x))
+    )
+    # combine with results
+    results <- cbind(
+        iter = seq(1, nrow(iterablesIdx)),
+        iterablesIdx,
+        result = sapply(resPaths, readRDS)
+    )
+    # add to safeParResults object
+    out@results <- results
+    return(out)
 }
 
 # sub-function for recursively extracting user-defined objects
@@ -273,7 +444,7 @@ setMethod(
 ) {
     # pull fixed args from func definition
     funcArgs <- formals(func)
-    fixed = c()
+    fixed = list()
     for (arg in names(funcArgs)) {
         # non-iterables
         if (!(arg %in% names(iterables))) {
@@ -282,7 +453,7 @@ setMethod(
                 stop(paste0("argError: 'fixed argument ", arg, "' is missing default value"))
             }
             # evaluate default in parent frame
-            fixed <- append(fixed, deparse(funcArgs[[arg]]))
+            fixed[[funcArgs[[arg]]]] <- eval(funcArgs[[arg]], envir = parent.frame())
         }
     }
     return(fixed)
