@@ -39,6 +39,8 @@ jobs:
           sudo apt-get install -y libcurl4-openssl-dev libuv1-dev
           
       - name: Install dependencies
+        env:
+          GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
         run: |
           options(repos = c(CRAN = "https://cloud.r-project.org"))
           install.packages(c("remotes", "rcmdcheck"))
