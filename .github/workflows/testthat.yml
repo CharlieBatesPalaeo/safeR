@@ -19,11 +19,13 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
+        os: [ubuntu-22.04, macos-latest, windows-latest]
         r-version: ['oldrel-2', 'oldrel-1', 'oldrel', 'release']
+    
+    runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v4
