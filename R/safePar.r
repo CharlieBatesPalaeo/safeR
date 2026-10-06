@@ -57,16 +57,35 @@ setMethod(
         func,
         iterables
     )
-    # create temp file for Rscript
+    # get coercion cahce
+    coercionCache <- get(".coercionEnvCache", envir = asNamespace("safeR"))
+    coercions <- lapply(
+        as.list(coercionCache, all.names = TRUE),
+        function(targetEnv) {
+            methods <- as.list(targetEnv, all.names = TRUE)
+
+            lapply(methods, function(fun) {
+                funEnv <- environment(fun)
+
+                list(
+                    fun = fun,
+                    bindings = as.list(funEnv, all.names = TRUE)
+                )
+            })
+        }
+    )
+    # create temp file
     env <- tempfile(fileext = ".rds")
     saveRDS(
         list(
             func = func,
             userObjs = userObjs,
-            fixedArgs = fixedArgs
+            fixedArgs = fixedArgs,
+            coercions = coercions
         ),
         file = env
     )
+
     #############
     # iterables #
     #############
@@ -88,148 +107,59 @@ setMethod(
             names(iterables)
         )
     ))
-    # create temp file for Rscript
+    # create temp file
     iters <- tempfile(fileext = ".rds")
-    
-    rowIter <- as.list(iterablesMatrix[1, ])
-    names(rowIter) <- colnames(iterablesMatrix)
     saveRDS(
-        rowIter,
+        iterablesMatrix,
         file = iters
     )
 
-    ##################
-    # run subprocces #
-    ##################
-
-    # test for cache copying
-    tmp <- tempfile()
-    cache <- get(".coercionEnvCache", envir = asNamespace("safeR"))
-
-    coercions <- lapply(
-        as.list(cache, all.names = TRUE),
-        function(targetEnv) {
-            methods <- as.list(targetEnv, all.names = TRUE)
-
-            lapply(methods, function(fun) {
-                funEnv <- environment(fun)
-
-                list(
-                    fun = fun,
-                    bindings = as.list(funEnv, all.names = TRUE)
-                )
-            })
-        }
-    )
-
-    saveRDS(coercions, tmp)
-
-    template <- "
-        # load safeR
-        library(safeR)
-
-        # load env and fixed
-        fixedPath <- commandArgs(trailingOnly = TRUE)[1]
-        fixedVars <- readRDS(fixedPath)
-        # func
-        assign('func', fixedVars$func, envir = .GlobalEnv)
-
-        userObjs <- fixedVars$userObjs
-        for (nm in names(userObjs)) {
-            obj <- userObjs[[nm]]
-            assign(nm, obj, envir = .GlobalEnv)
-
-            if (methods::isClassDef(obj)) {
-                methods::assignClassDef(nm, obj, where = .GlobalEnv)
-                methods::getClass(nm, where = .GlobalEnv)
-            }
-        }
-
-
-        print(methods::isClass('posInt'))
-
-        # load coercion cache
-        cachePath <- commandArgs(trailingOnly = TRUE)[4]
-        coercions <- readRDS(cachePath)
-        cache <- get('.coercionEnvCache', envir = asNamespace('safeR'))
-
-        for (target in names(coercions)) {
-            targetEnv <- new.env(parent = .GlobalEnv)
-
-            for (input in names(coercions[[target]])) {
-                bundle <- coercions[[target]][[input]]
-                funEnv <- list2env(bundle$bindings, parent = .GlobalEnv)
-
-                fun <- bundle$fun
-                environment(fun) <- funEnv
-                assign(input, fun, envir = targetEnv)
-            }
-
-            assign(target, targetEnv, envir = cache)
-        }
-
-        # load iterables
-        iterPath <- commandArgs(trailingOnly = TRUE)[2]
-        iterVars <- readRDS(iterPath)
-        list2env(iterVars, envir = .GlobalEnv)
-
-        # load output
-        outPath <- commandArgs(trailingOnly = TRUE)[3]
-
-        # tmp cache
-        tmpPath <- commandArgs(trailingOnly = TRUE)[4]
-        tmpCache <- readRDS(tmpPath)
-
-        # run func
-        mc <- match.call(
-            func,
-            call = as.call(c(
-                list(quote(func)),
-                as.list(iterVars)
-            )),
-            expand.dots = FALSE
-        )
-        out <- eval(mc)
-
-        # return output
-        saveRDS(
-            out,
-            file = outPath
-        )
-    "
-    run <- tempfile(fileext = ".R")
-    writeLines(
-        template,
-        con = run
-    )
-    
-    # test run
+    ###############
+    # output file #
+    ###############
     out <- tempfile(fileext = ".rds")
-
-    p <- processx::process$new(
-        command = file.path(R.home("bin"), "Rscript"),
-        args = c(
-            run,
-            env,
-            iters,
-            out,
-            tmp ####
-        ),
-        stdout = "|",
-        stderr = "|"
+    outStruct <- cbind(
+        iter = seq(1, nrow(iterablesMatrix)),
+        iterablesMatrix,
+        result = rep(NA, nrow(iterablesMatrix))
     )
-    p$wait()
-    cat(p$read_all_output())
-    cat(p$read_all_error())
+    View(outStruct)
+    saveRDS(
+        list(names = seq(1, nrow(iterablesMatrix))),
+        file = out
+    )
 
-    print("after print...")
-
-    if (p$get_exit_status() != 0) {
-        cat(p$read_all_error())
-        stop("Subprocess failed")
-    }
-
-    result <- readRDS(out)
+    #####################
+    # run sub-processes #
+    #####################
+    
+    ## test run
+    #out <- tempfile(fileext = ".rds")
+ 
+    #p <- processx::process$new(
+    #    command = file.path(R.home("bin"), "Rscript"),
+    #    args = c(
+    #        run,
+    #        env,
+    #        iters,
+    #        i = 1,
+    #        out,
+    #    ),
+    #    stdout = "|",
+    #    stderr = "|"
+    #)
+    #p$wait()
+    #cat(p$read_all_output())
+    #cat(p$read_all_error())
+ 
+    #print("after print...")
+ 
+    #if (p$get_exit_status() != 0) {
+    #    cat(p$read_all_error())
+    #    stop("Subprocess failed")
+    #}
+ 
+    #result <- readRDS(out)
 }
 
 # sub-function for recursively extracting user-defined objects
