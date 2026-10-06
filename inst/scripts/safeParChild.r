@@ -52,6 +52,9 @@ for (target in names(fixedVars$coercions)) {
     }
     assign(target, targetEnv, envir = cache)
 }
+# extract safeR options
+safeR::setSafeR(fixedVars$safeROptions$safeR)
+safeR::setSafeParErrorMode(fixedVars$safeROptions$safeParErrorMode)
 ################## 
 # load iterables #
 ##################

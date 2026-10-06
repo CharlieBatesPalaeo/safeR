@@ -27,6 +27,7 @@ setCoercion(
     }
 )
 ## aribtrary function to validate
+setSafeParErrorMode("all")
 A = "not a posInt"
 testWrap <- (function(
     x = 1 ~ posInt,
@@ -34,14 +35,17 @@ testWrap <- (function(
     a = A
 ) {as.numeric(x + y + a)}) \%->\% "posInt"
 ## run in parallel
-testPairwise <- safePar(
-    func = testWrap,
-    iterables = list(
-        x = c(1,2,3),
-        y = c(4,5,6)
+try(
+    testPairwise <- safePar(
+        func = testWrap,
+        iterables = list(
+            x = c(1,2,3),
+            y = c(4,5,6)
+        ),
+        iterType = "pairwise",
+        nCores = 2
     ),
-    iterType = "pairwise",
-    nCores = 2
+    silent = TRUE
 )
 ## view error messages from child processes
 safeParTraceback()

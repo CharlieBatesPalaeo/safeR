@@ -130,7 +130,7 @@ methods::setMethod(
         func,
         iterables
     )
-    # get coercion cahce
+    # get coercion cache
     coercionCache <- get(".coercionEnvCache", envir = asNamespace("safeR"))
     coercions <- lapply(
         as.list(coercionCache, all.names = TRUE),
@@ -147,6 +147,11 @@ methods::setMethod(
             })
         }
     )
+    # get global safeR options
+    safeROptions <- list(
+        safeR = getOption("safeR"),
+        safeParErrorMode = getOption("safeParErrorMode")
+    )
     # create temp file
     env <- tempfile(fileext = ".rds")
     saveRDS(
@@ -154,7 +159,8 @@ methods::setMethod(
             func = func,
             userObjs = userObjs,
             fixedArgs = fixedArgs,
-            coercions = coercions
+            coercions = coercions,
+            safeROptions = safeROptions
         ),
         file = env
     )
