@@ -326,9 +326,9 @@ methods::setMethod(
     )
     # combine with results
     results <- data.frame(
-        iter = seq(1, nrow(iterablesIdx)),
+        iter = seq_len(nrow(iterablesIdx)),
         iterablesIdx,
-        result = sapply(resPaths, readRDS)
+        result = I(lapply(resPaths, readRDS))
     )
     # add to safeParResults object
     out@results <- results
