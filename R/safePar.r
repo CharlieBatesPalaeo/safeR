@@ -325,7 +325,7 @@ methods::setMethod(
     function(x) match(x, unique(x))
     )
     # combine with results
-    results <- cbind(
+    results <- data.frame(
         iter = seq(1, nrow(iterablesIdx)),
         iterablesIdx,
         result = sapply(resPaths, readRDS)
