@@ -18,10 +18,10 @@ methods::setClass(
         fixedArgs = "list",
         iterables = "list",
         iterType = "character",
-        results = "matrix"
+        results = "data.frame"
     ),
     prototype = list(
-        results = matrix(nrow=0, ncol=0)
+        results = data.frame()
     )
 )
 
