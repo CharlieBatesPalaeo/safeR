@@ -135,16 +135,7 @@ methods::setMethod(
     coercions <- lapply(
         as.list(coercionCache, all.names = TRUE),
         function(targetEnv) {
-            methods <- as.list(targetEnv, all.names = TRUE)
-
-            lapply(methods, function(fun) {
-                funEnv <- environment(fun)
-
-                list(
-                    fun = fun,
-                    bindings = as.list(funEnv, all.names = TRUE)
-                )
-            })
+            as.list(targetEnv, all.names = TRUE)
         }
     )
     # get global safeR options
