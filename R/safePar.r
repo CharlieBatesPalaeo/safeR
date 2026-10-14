@@ -366,7 +366,7 @@ methods::setMethod(
         for (e in expressions) {
             e <- paste0(as.character(e), collapse = "")
             # check if junk or already found
-            if (e %in% junk || e %in% names(found)) next
+            if (e %in% junk || e %in% found) next
             # check if user-defined object
             tryCatch({
                 found[[e]] <<- .getUserGlobal(e)
