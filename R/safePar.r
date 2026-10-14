@@ -457,7 +457,7 @@ methods::setMethod(
                 stop(paste0("argError: 'fixed argument ", arg, "' is missing default value"))
             }
             # evaluate default in parent frame
-            fixed[[arg]] <- eval(funcArgs[[arg]], envir = parent.frame())
+            fixed[[funcArgs[[arg]]]] <- eval(funcArgs[[arg]], envir = parent.frame())
         }
     }
     return(fixed)
