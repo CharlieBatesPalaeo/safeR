@@ -124,12 +124,21 @@ methods::setMethod(
     # env and fixed variables #
     ###########################
     # get user-defined objects
+    start <- Sys.time()
     userObjs <- .getUserObjs(func)
+    end <- Sys.time()
+    print(paste0("userObjs extraction time: ", round(difftime(end, start, units = "secs"), 2), " seconds"))
+
     # get fixed args
+    start <- Sys.time()
     fixedArgs <- .getFixedArgs(
         func,
         iterables
     )
+    end <- Sys.time()
+    print(paste0("fixedArgs extraction time: ", round(difftime(end, start, units = "secs"), 2), " seconds"))
+
+    start <- Sys.time()
     # get coercion cache
     coercionCache <- get(".coercionEnvCache", envir = asNamespace("safeR"))
     coercions <- lapply(
@@ -147,16 +156,25 @@ methods::setMethod(
             })
         }
     )
+    end <- Sys.time()
+    print(paste0("coercions extraction time: ", round(difftime(end, start, units = "secs"), 2), " seconds"))
+    
     # get global safeR options
+    start <- Sys.time()
     safeROptions <- list(
         safeR = getOption("safeR"),
         safeParErrorMode = getOption("safeParErrorMode")
     )
+    end <- Sys.time()
+    print(paste0("safeROptions extraction time: ", round(difftime(end, start, units = "secs"), 2), " seconds"))
+
     tempFiles <- character()
     on.exit(unlink(tempFiles), add = TRUE)
     # create temp file
     env <- tempfile(fileext = ".rds")
     tempFiles <- c(tempFiles, env)
+    
+    start <- Sys.time()
     saveRDS(
         list(
             func = func,
@@ -167,7 +185,8 @@ methods::setMethod(
         ),
         file = env
     )
-
+    end <- Sys.time()
+    print(paste0("env extraction time: ", round(difftime(end, start, units = "secs"), 2), " seconds"))  
     #############
     # iterables #
     #############
