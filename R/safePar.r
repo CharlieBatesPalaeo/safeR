@@ -125,12 +125,13 @@ methods::setMethod(
     ###########################
     # get user-defined objects
     userObjs <- .getUserObjs(func)
+    print("got userObjs")
     # get fixed args
     fixedArgs <- .getFixedArgs(
         func,
         iterables
     )
-    print(fixedArgs)
+    print("got fixedArgs")
     # get coercion cache
     coercionCache <- get(".coercionEnvCache", envir = asNamespace("safeR"))
     coercions <- lapply(
