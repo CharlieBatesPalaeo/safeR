@@ -127,7 +127,7 @@ methods::setMethod(
     start <- Sys.time()
     userObjs <- .getUserObjs(func)
     end <- Sys.time()
-    print(paste0("userObjs extraction time: ", round(difftime(end, start, units = "secs"), 2), " seconds"))
+    print(paste0("userObjs extraction time: ", round(end - start, 2), " seconds"))
 
     # get fixed args
     start <- Sys.time()
@@ -136,7 +136,7 @@ methods::setMethod(
         iterables
     )
     end <- Sys.time()
-    print(paste0("fixedArgs extraction time: ", round(difftime(end, start, units = "secs"), 2), " seconds"))
+    print(paste0("fixedArgs extraction time: ",round(end - start, 2), 2), " seconds"))
 
     start <- Sys.time()
     # get coercion cache
@@ -157,7 +157,7 @@ methods::setMethod(
         }
     )
     end <- Sys.time()
-    print(paste0("coercions extraction time: ", round(difftime(end, start, units = "secs"), 2), " seconds"))
+    print(paste0("coercions extraction time: ", round(end - start, 2), " seconds"))
     
     # get global safeR options
     start <- Sys.time()
@@ -166,7 +166,7 @@ methods::setMethod(
         safeParErrorMode = getOption("safeParErrorMode")
     )
     end <- Sys.time()
-    print(paste0("safeROptions extraction time: ", round(difftime(end, start, units = "secs"), 2), " seconds"))
+    print(paste0("safeROptions extraction time: ", round(end - start, 2), " seconds"))
 
     tempFiles <- character()
     on.exit(unlink(tempFiles), add = TRUE)
@@ -186,7 +186,7 @@ methods::setMethod(
         file = env
     )
     end <- Sys.time()
-    print(paste0("env extraction time: ", round(difftime(end, start, units = "secs"), 2), " seconds"))  
+    print(paste0("env extraction time: ", round(end - start, 2), " seconds"))  
     #############
     # iterables #
     #############
