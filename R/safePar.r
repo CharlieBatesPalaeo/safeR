@@ -143,7 +143,7 @@ methods::setMethod(
     coercionCache <- get(".coercionEnvCache", envir = asNamespace("safeR"))
     coercions <- lapply(
         as.list(coercionCache, all.names = TRUE),
-            as.list(targetEnv, all.names = TRUE)
+        function(targetEnv) as.list(targetEnv, all.names = TRUE)
     )
     end <- Sys.time()
     print(paste0("coercions extraction time: ", round(end - start, 2), " seconds"))
