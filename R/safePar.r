@@ -334,10 +334,10 @@ methods::setMethod(
     function(x) match(x, unique(x))
     )
     # combine with results
-    results <- cbind(
-        iter = seq(1, nrow(iterablesIdx)),
+    results <- data.frame(
+        iter = seq_len(nrow(iterablesIdx)),
         iterablesIdx,
-        result = sapply(resPaths, readRDS)
+        result = I(lapply(resPaths, readRDS))
     )
     # add to safeParResults object
     out@results <- results
@@ -373,7 +373,7 @@ methods::setMethod(
         for (e in expressions) {
             e <- paste0(as.character(e), collapse = "")
             # check if junk or already found
-            if (e %in% junk || e %in% found) next
+            if (e %in% junk || e %in% names(found)) next
             # check if user-defined object
             tryCatch({
                 found[[e]] <<- .getUserGlobal(e)
