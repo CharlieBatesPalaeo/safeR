@@ -125,19 +125,26 @@ methods::setMethod(
     ###########################
     # get user-defined objects
     userObjs <- .getUserObjs(func)
-    print("got userObjs")
     # get fixed args
     fixedArgs <- .getFixedArgs(
         func,
         iterables
     )
-    print("got fixedArgs")
     # get coercion cache
     coercionCache <- get(".coercionEnvCache", envir = asNamespace("safeR"))
     coercions <- lapply(
         as.list(coercionCache, all.names = TRUE),
         function(targetEnv) {
-            as.list(targetEnv, all.names = TRUE)
+            methods <- as.list(targetEnv, all.names = TRUE)
+
+            lapply(methods, function(fun) {
+                funEnv <- environment(fun)
+
+                list(
+                    fun = fun,
+                    bindings = as.list(funEnv, all.names = TRUE)
+                )
+            })
         }
     )
     # get global safeR options
@@ -327,10 +334,10 @@ methods::setMethod(
     function(x) match(x, unique(x))
     )
     # combine with results
-    results <- data.frame(
-        iter = seq_len(nrow(iterablesIdx)),
+    results <- cbind(
+        iter = seq(1, nrow(iterablesIdx)),
         iterablesIdx,
-        result = I(lapply(resPaths, readRDS))
+        result = sapply(resPaths, readRDS)
     )
     # add to safeParResults object
     out@results <- results
