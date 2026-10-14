@@ -40,30 +40,17 @@ for (nm in names(userObjs)) {
     }
 }
 # extract coercion cache
-# restore coercion cache
-cache <- get(
-    ".coercionEnvCache",
-    envir = asNamespace("safeR")
-)
+cache <- get('.coercionEnvCache', envir = asNamespace('safeR'))
 for (target in names(fixedVars$coercions)) {
-    # create target class environment
-    targetEnv <- new.env(parent = emptyenv())
+    targetEnv <- new.env(parent = .GlobalEnv)
     for (input in names(fixedVars$coercions[[target]])) {
-        # retrieve coercion function
-        fun <- fixedVars$coercions[[target]][[input]]
-        # store function in target environment
-        assign(
-            input,
-            fun,
-            envir = targetEnv
-        )
+        bundle <- fixedVars$coercions[[target]][[input]]
+        funEnv <- list2env(bundle$bindings, parent = .GlobalEnv)
+        fun <- bundle$fun
+        environment(fun) <- funEnv
+        assign(input, fun, envir = targetEnv)
     }
-    # store target environment in cache
-    assign(
-        target,
-        targetEnv,
-        envir = cache
-    )
+    assign(target, targetEnv, envir = cache)
 }
 # extract safeR options
 safeR::setSafeR(fixedVars$safeROptions$safeR)
