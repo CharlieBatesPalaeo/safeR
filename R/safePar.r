@@ -136,7 +136,7 @@ methods::setMethod(
         iterables
     )
     end <- Sys.time()
-    print(paste0("fixedArgs extraction time: ",round(end - start, 2), 2, " seconds"))
+    print(paste0("fixedArgs extraction time: ",round(end - start, 2), " seconds"))
 
     start <- Sys.time()
     # get coercion cache
